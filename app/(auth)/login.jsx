@@ -1,4 +1,4 @@
-import { StyleSheet, Text, Keyboard, TouchableWithoutFeedback, TextInput } from 'react-native'
+import { StyleSheet, Text, Keyboard, TouchableWithoutFeedback, TextInput, ActivityIndicator } from 'react-native'
 import { Link } from 'expo-router'
 import { useState } from 'react'
 import { useUser } from '../../hooks/useUser'
@@ -59,6 +59,9 @@ const Login = () => {
             Register instead
           </ThemedText>
         </Link>
+
+
+        
 
       </ThemedView>
     

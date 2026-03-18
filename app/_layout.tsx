@@ -7,6 +7,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme()
   const theme = Colors[colorScheme] ?? Colors.light
   
+  
   return (
     <UserProvider>
     <View className="flex-1">
@@ -21,7 +22,7 @@ export default function RootLayout() {
         <Stack.Screen name="register" options={{title: 'register'}}/>
         <Stack.Screen name="login" options={{title: 'login'}}/>
       </Stack>
-      <Text>footer</Text>
+      
     </View>
     </UserProvider>
   );
