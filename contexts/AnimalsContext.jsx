@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { databases } from "../lib/appwrite";
+import { databases,client } from "../lib/appwrite";
 import { ID, Permission, Query, Role } from "react-native-appwrite";
 import { useUser } from "../hooks/useUser";
 
@@ -59,14 +59,36 @@ export function AnimalsProvider({ children }){
             console.error(error.message)
         }
     }
-    useEffect(()=>{
+    useEffect(() => {
+    let unsubscribe
+    const channel = `databases.${DATABASE_ID}.collections.${COLLECTION_ID}.documents`
 
-        if (user){
-            fetchAnimals()
-        }else {
-            setAnimals([])
+    if (user) {
+      fetchAnimals()
+
+      unsubscribe = client.subscribe(channel, (response) => {
+        const { payload, events } = response
+        console.log("event",events)
+        console.log("this is the payload",payload)
+
+        if (events[0].includes("create")) {
+          setAnimals((prevAnimals) => [...prevAnimals, payload])
         }
-    },[user])
+
+        if (events[0].includes("delete")) {
+          setAnimals((prevAnimals) => prevAnimals.filter((animal) => animal.$id !== payload.$id))
+        }
+      })
+
+    } else {
+      setAnimals([])
+    }
+
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
+
+  }, [user])
     
     return (
         <AnimalsContext.Provider 
