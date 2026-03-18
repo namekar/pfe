@@ -21,7 +21,7 @@ export default function DashboardLayout() {
     >
 
       <Tabs.Screen 
-        name="profile"
+        name="Profile"
         options={{ title: "Profile", tabBarIcon: ({ focused }) => (
           <Ionicons 
             size={24} 
