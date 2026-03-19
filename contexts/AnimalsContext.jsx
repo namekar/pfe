@@ -30,7 +30,12 @@ export function AnimalsProvider({ children }){
 
     async function fetchAnimalById(id){
         try {
-            
+            const response = await databases.getDocument(
+                DATABASE_ID,
+                COLLECTION_ID,
+                id
+            )
+            return response
         } catch (error){
             console.error(error.message)
         }
@@ -48,15 +53,21 @@ export function AnimalsProvider({ children }){
                     Permission.delete(Role.user(user.$id))
                 ]
             )
+            setAnimals(prev => [...prev, newAnimal])
         }catch (error){
             console.error(error.message)
         }
     }
     async function DeleteAnimal(id){
         try{
-
+            await databases.deleteDocument(
+                DATABASE_ID,
+                COLLECTION_ID,
+                id
+            )
+            setAnimals(prev => prev.filter(animal => animal.$id !== id))
         }catch (error){
-            console.error(error.message)
+            console.error(error.message) 
         }
     }
     useEffect(() => {

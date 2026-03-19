@@ -30,6 +30,10 @@ export default function DashboardLayout() {
           />
         )}}
       />
+      <Tabs.Screen
+        name="animals/[id]"
+        options={{href: null}}
+      />
       
     </Tabs>
     </UserOnly>

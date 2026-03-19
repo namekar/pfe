@@ -6,6 +6,7 @@ import Spacer from "../../components/Spacer"
 import ThemedText from "../../components/ThemedText"
 import ThemedView from "../../components/ThemedView"
 import ThemedCard from "../../components/ThemedCard"
+import { router } from 'expo-router'
 
 const Animals = () => {
     const {animals} =useAnimals()
@@ -22,7 +23,7 @@ const Animals = () => {
             keyExtractor={(item) => item.$id}
             contentContainerStyle={styles.list}
             renderItem={({item})=>(
-                <Pressable>
+                <Pressable onPress={()=> router.push(`/animals/${item.$id}`)}>
                     <ThemedCard style={styles.card}>
                         <ThemedText style={styles.name}>
                             {item.name}
