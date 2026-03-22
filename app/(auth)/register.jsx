@@ -12,11 +12,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 const Register = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [name, setName] =useState("")
 
   const { register} = useUser()
   const handleSubmit = async () => {
     try {
-      await register(email, password)
+      await register(email, password, name)
     } catch (error){
       
     }
@@ -35,6 +36,12 @@ const Register = () => {
         </ThemedText>
 
         <Spacer />
+        <ThemedTextInput
+          style={{ marginBottom: 20, width: "80%" }}
+          placeholder="name"
+          value={name}
+          onChangeText={setName}
+        />
         <ThemedTextInput
           style={{ marginBottom: 20, width: "80%" }}
           placeholder="Email"
@@ -72,7 +79,7 @@ export default Register
 
 const styles = StyleSheet.create({
   container: {
-    
+    flex: 1,
     justifyContent: "center",
     alignItems: "center"
   },

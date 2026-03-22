@@ -1,8 +1,10 @@
 import { createContext, useEffect } from "react";
 import { useState } from "react"
-import {account} from "../lib/appwrite"
+import {account, databases} from "../lib/appwrite"
 import {ID} from "react-native-appwrite"
 export const UserContext = createContext()
+const DATABASE_ID = "69b9f57d000b139ece20"
+const USER_ID = "users"
 
 export function UserProvider({children}){
     const [user, setUser] = useState(null)
@@ -18,10 +20,22 @@ export function UserProvider({children}){
             console.log(error.message)
         }
     }
-    async function register(email, password) {
+    async function register(email, password,radio,name) {
         try {
-            await account.create(ID.unique(), email, password)
+            await account.create(ID.unique(), email, password,name)
             await login(email,password)
+            const user = await account.get()
+            await databases.createDocument(
+                DATABASE_ID,
+                USER_ID,
+                user.$id,
+                {
+                    name: name,
+                    email: email,
+                    role: radio
+                }
+            )
+            
 
         } catch (error) {
             console.log(error.message)
