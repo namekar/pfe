@@ -8,16 +8,18 @@ import Spacer from '../../components/Spacer'
 import ThemedButton from '../../components/ThemedButton'
 import ThemedTextInput from "../../components/ThemedTextInput"
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { View } from 'react-native-web'
 
 const Register = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] =useState("")
+  const [role, setRole] = useState("")
 
   const { register} = useUser()
   const handleSubmit = async () => {
     try {
-      await register(email, password, name)
+      await register(email, password,role, name)
     } catch (error){
       
     }
@@ -57,6 +59,24 @@ const Register = () => {
           onChangeText={setPassword}
           secureTextEntry
         />
+        <ThemedView style={styles.row} >
+        <ThemedButton onPress={()=> setRole("Owner")}
+          style={[
+            styles.Option,
+            role === "Owner" && styles.selectedOption
+        ]}>
+          <Text>Owner</Text>
+
+        </ThemedButton>
+        <ThemedButton onPress={()=> setRole("Vet")}
+          style={[
+            styles.Option,
+            role === "Vet" && styles.selectedOption
+        ]}>
+          <Text>veterinary</Text>
+
+        </ThemedButton>
+        </ThemedView>
 
         <ThemedButton onPress={handleSubmit}>
           <Text style={{ color: '#f2f2f2' }}>Register</Text>
@@ -88,4 +108,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 30
   },
+  selectedOption: {
+    borderColor: "#00893e",
+    borderWidth: 2
+  },
+  Option: {
+  marginHorizontal: 50,
+  },
+  row:{
+    flexDirection: "row",
+  }
 })

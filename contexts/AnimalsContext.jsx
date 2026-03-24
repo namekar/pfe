@@ -18,7 +18,8 @@ export function AnimalsProvider({ children }){
                 DATABASE_ID,
                 COLLECTION_ID,
                 [
-                    Query.equal('userId',user.$id)
+                    Query.equal('OwnerId',user.$id),
+                    Query.equal('VetId',user.$id)
                 ]
             )
             setAnimals(response.documents)
@@ -46,9 +47,9 @@ export function AnimalsProvider({ children }){
                 DATABASE_ID,
                 COLLECTION_ID,
                 ID.unique(),
-                {...data, userId: user.$id},
+                {...data},
                 [
-                    Permission.read(Role.user(user.$id)),
+                    Permission.read(Role.user(data.userId)),
                     Permission.update(Role.user(user.$id)),
                     Permission.delete(Role.user(user.$id))
                 ]
