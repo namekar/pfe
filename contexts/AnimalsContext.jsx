@@ -47,9 +47,12 @@ export function AnimalsProvider({ children }){
                 DATABASE_ID,
                 COLLECTION_ID,
                 ID.unique(),
-                {...data},
+                {...data,
+                    OwnerId: data.OwnerId ||  user.$id,
+                    VetId: data.VetId || (user.role === "Vet" ? user.$id: null),
+                },
                 [
-                    Permission.read(Role.user(data.userId)),
+                    Permission.read(Role.user(data.OwnerId || user.$id)),
                     Permission.update(Role.user(user.$id)),
                     Permission.delete(Role.user(user.$id))
                 ]
