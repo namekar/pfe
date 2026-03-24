@@ -1,13 +1,13 @@
-import { StyleSheet, Text, TouchableWithoutFeedback, Keyboard } from 'react-native'
-import { useAnimals } from "../../hooks/useAnimals"
 import { useRouter } from 'expo-router'
 import { useState } from 'react'
+import { StyleSheet, Text, TouchableWithoutFeedback } from 'react-native'
+import { useAnimals } from "../../../hooks/useAnimals"
 
-import ThemedView from "../../components/ThemedView"
-import ThemedText from "../../components/ThemedText"
-import ThemedTextInput from "../../components/ThemedTextInput"
-import ThemedButton from '../../components/ThemedButton'
-import Spacer from '../../components/Spacer'
+import Spacer from '../../../components/Spacer'
+import ThemedButton from '../../../components/ThemedButton'
+import ThemedText from "../../../components/ThemedText"
+import ThemedTextInput from "../../../components/ThemedTextInput"
+import ThemedView from "../../../components/ThemedView"
 
 const Create = () => {
   const [name, setName] = useState("")

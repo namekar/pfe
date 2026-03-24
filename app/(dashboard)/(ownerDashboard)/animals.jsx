@@ -1,12 +1,12 @@
-import { StyleSheet, FlatList, Pressable } from 'react-native'
+import { FlatList, Pressable, StyleSheet } from 'react-native'
 
-import { useAnimals } from '../../hooks/useAnimals'
-import { Colors } from '../../constants/colors'
-import Spacer from "../../components/Spacer"
-import ThemedText from "../../components/ThemedText"
-import ThemedView from "../../components/ThemedView"
-import ThemedCard from "../../components/ThemedCard"
 import { router } from 'expo-router'
+import Spacer from "../../../components/Spacer"
+import ThemedCard from "../../../components/ThemedCard"
+import ThemedText from "../../../components/ThemedText"
+import ThemedView from "../../../components/ThemedView"
+import { Colors } from '../../../constants/colors'
+import { useAnimals } from '../../../hooks/useAnimals'
 
 const Animals = () => {
     const {animals} =useAnimals()

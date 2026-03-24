@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
-import {Colors} from "../../constants/colors"
-import {useUser} from '../../hooks/useUser'
-import ThemedButton from '../../components/ThemedButton'
-import ThemedView from '../../components/ThemedView'
-import Spacer from '../../components/Spacer'
-import ThemedText from '../../components/ThemedText'
+import {Colors} from "../../../constants/colors"
+import {useUser} from '../../../hooks/useUser'
+import ThemedButton from '../../../components/ThemedButton'
+import ThemedView from '../../../components/ThemedView'
+import Spacer from '../../../components/Spacer'
+import ThemedText from '../../../components/ThemedText'
 const profile = () => {
   const { logout, user } = useUser()
 

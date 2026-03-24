@@ -14,7 +14,15 @@ export function UserProvider({children}){
         try {
             await account.createEmailPasswordSession( email, password)
             const response = await account.get()
-            setUser(response)
+            const userDoc = await databases.getDocument(
+                DATABASE_ID,
+                USER_ID,
+                response.$id
+            )
+            setUser({
+                ...response,
+                role: userDoc.role
+            })
         } catch (error) {
             console.log(error.message)
         }
@@ -22,7 +30,7 @@ export function UserProvider({children}){
     async function register(email, password,radio,name) {
         try {
             await account.create(ID.unique(), email, password)
-            await login(email,password)
+            await account.createEmailPasswordSession(email, password)
             const user = await account.get()
             await databases.createDocument(
                 DATABASE_ID,
@@ -35,6 +43,9 @@ export function UserProvider({children}){
                     role: radio
                 }
             )
+            setUser({ ...user,
+                role: radio
+            })
             
 
         } catch (error) {
@@ -49,7 +60,14 @@ export function UserProvider({children}){
     async function getInitialUserValue(){
         try{
             const response = await account.get()
-            setUser(response)
+            const userDoc = await databases.getDocument(
+                DATABASE_ID,
+                USER_ID,
+                response.$id
+            )
+            setUser({ ...response,
+                role: userDoc.role
+            })
         }catch (error) {
             setUser(null)
         }finally{

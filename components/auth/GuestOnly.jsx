@@ -8,7 +8,12 @@ const GuestOnly = ({ children }) => {
 
     useEffect(()=>{
         if (authChecked && user !== null){
-            router.replace('/Profile')
+            if(user.role ==="Vet"){
+            router.replace('/(vetDashboard)/Profile')
+        }
+            if (user.role === "Owner"){
+                router.replace('/(ownerDashboard)/Profile')
+            }
         }
     },[user, authChecked])
     if (!authChecked || user){
