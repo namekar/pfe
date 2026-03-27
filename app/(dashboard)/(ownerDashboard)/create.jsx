@@ -10,8 +10,9 @@ import ThemedTextInput from "../../../components/ThemedTextInput"
 import ThemedView from "../../../components/ThemedView"
 
 const Create = () => {
+  const [species, setSpecies] = useState("")
   const [name, setName] = useState("")
-  const [owner, setOwner] = useState("")
+  /*const [owner, setOwner] = useState("")*/
   const [description, setDescription] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -19,16 +20,17 @@ const Create = () => {
   const router = useRouter()
 
   async function handleSubmit() {
-    if (!name.trim() || !owner.trim() || !description.trim()) return
+    if (!name.trim() /*|| !owner.trim()*/ || !description.trim() || !species.trim()) return
 
     setLoading(true)
     
-    await createAnimal({ name, owner, description })
+    await createAnimal({ name,description, species })
 
-    
+    setSpecies("")
     setName("")
-    setOwner("")
+    /*setOwner("")*/
     setDescription("")
+    
 
     
     router.replace("/animals")
@@ -54,14 +56,22 @@ const Create = () => {
         />
         <Spacer />
 
-        <ThemedTextInput
+        {/*<ThemedTextInput
           style={styles.input}
           placeholder="owner"
           value={owner}
           onChangeText={setOwner}
         />
-        <Spacer />
+        <Spacer />*/}
 
+        <ThemedTextInput
+          style={styles.multiline}
+          placeholder="species"
+          value={species}
+          onChangeText={setSpecies}
+          multiline={true}
+        />
+        <Spacer />
         <ThemedTextInput
           style={styles.multiline}
           placeholder="Description"

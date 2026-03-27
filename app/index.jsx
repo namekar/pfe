@@ -13,10 +13,10 @@ const Home = () => {
       <ThemedLogo />
       <Spacer />
 
-      <ThemedText style={styles.title} title={true}>The Number 1</ThemedText>
+      <ThemedText style={styles.title} title={true}>pet archives</ThemedText>
 
       <ThemedText style={{ marginTop: 10, marginBottom: 30 }}>
-        Reading List App
+        save all files safely
       </ThemedText>
 
       <Link href="/login" style={styles.link}>
