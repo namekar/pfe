@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router'
 import { useState } from 'react'
-import { StyleSheet, Text, TouchableWithoutFeedback } from 'react-native'
+import { FlatList, ScrollView, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native'
 import { useAnimals } from "../../../hooks/useAnimals"
 
 import Spacer from '../../../components/Spacer'
@@ -23,16 +23,19 @@ const Create = () => {
   const router = useRouter()
 
   async function handleSubmit() {
-    if (!name.trim() /*|| !owner.trim()*/ || !description.trim() || !species.trim()) return
+    if (!name.trim() /*|| !owner.trim()*/ || !description.trim() || !species.trim() || !breed.trim() || !age.trim() || !weight.trim()) return
 
     setLoading(true)
     
-    await createAnimal({ name,description, species })
+    await createAnimal({ name, description, species, breed, age, weight })
 
     setSpecies("")
     setName("")
     /*setOwner("")*/
     setDescription("")
+    setBreed("")
+    setWeight("")
+    setAge("")
     
     
 
@@ -43,8 +46,9 @@ const Create = () => {
   }
 
   return (
-    
+    <ScrollView>
     <TouchableWithoutFeedback > 
+      
       <ThemedView style={styles.container}>
 
         <ThemedText title={true} style={styles.heading}>
@@ -57,6 +61,36 @@ const Create = () => {
           placeholder="name"
           value={name}
           onChangeText={setName}
+        />
+        <Spacer />
+        <ThemedTextInput
+          style={styles.input}
+          placeholder="breed"
+          value={breed}
+          onChangeText={setBreed}
+        />
+        <Spacer />
+        <ThemedTextInput
+          style={styles.input}
+          placeholder="age"
+          value={age}
+          keyboardType="numeric"
+          onChangeText={(text) => {
+          const cleaned = text.replace(/[^0-9]/g, "");
+          setAge(cleaned);}
+          }
+        />
+        <Spacer />
+        <ThemedTextInput
+          style={styles.input}
+          placeholder="weight"
+          value={weight}
+          keyboardType="numeric"
+          onChangeText={(text) => {
+          
+          const cleaned = text.replace(/[^0-9]/g, "");
+          setWeight(cleaned);
+          }}
         />
         <Spacer />
 
@@ -93,6 +127,7 @@ const Create = () => {
 
       </ThemedView>
     </TouchableWithoutFeedback>
+    </ScrollView>
   )
 }
 
