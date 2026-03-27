@@ -12,6 +12,9 @@ import ThemedView from "../../../components/ThemedView"
 const Create = () => {
   const [species, setSpecies] = useState("")
   const [name, setName] = useState("")
+  const [breed, setBreed] = useState("")
+  const [age, setAge] = useState("")
+  const [weight, setWeight] = useState("")
   /*const [owner, setOwner] = useState("")*/
   const [description, setDescription] = useState("")
   const [loading, setLoading] = useState(false)
@@ -30,6 +33,7 @@ const Create = () => {
     setName("")
     /*setOwner("")*/
     setDescription("")
+    
     
 
     
