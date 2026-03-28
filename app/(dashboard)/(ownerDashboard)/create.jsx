@@ -27,7 +27,7 @@ const Create = () => {
 
     setLoading(true)
     
-    await createAnimal({ name, description, species, breed, age, weight })
+    await createAnimal({ name, description, species, breed, age: parseInt(age, 10), weight: parseInt(weight, 10) })
 
     setSpecies("")
     setName("")
