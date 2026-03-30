@@ -2,15 +2,15 @@ import { StyleSheet, Text, View } from 'react-native'
 import { router, useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 
-import ThemedView from "../../../components/ThemedView"
-import ThemedText from "../../../components/ThemedText"
-import ThemedTextInput from "../../../components/ThemedTextInput"
-import ThemedButton from '../../../components/ThemedButton'
-import Spacer from '../../../components/Spacer'
-import { useAnimals } from '../../../hooks/useAnimals'
-import ThemedCard from '../../../components/ThemedCard'
-import ThemedLoader from '../../../components/ThemedLoader'
-import { Colors } from '../../../constants/colors'
+import ThemedView from "../../../../components/ThemedView"
+import ThemedText from "../../../../components/ThemedText"
+import ThemedTextInput from "../../../../components/ThemedTextInput"
+import ThemedButton from '../../../../components/ThemedButton'
+import Spacer from '../../../../components/Spacer'
+import { useAnimals } from '../../../../hooks/useAnimals'
+import ThemedCard from '../../../../components/ThemedCard'
+import ThemedLoader from '../../../../components/ThemedLoader'
+import { Colors } from '../../../../constants/colors'
 
 const AnimalDetails = () => {
     const [animal, setAnimal] = useState(null)
