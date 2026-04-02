@@ -16,6 +16,7 @@ export default function RootLayout() {
         <StatusBar style="auto"/>
         <Stack
         screenOptions={{
+          headerShown : false,
           headerStyle : {backgroundColor: theme.navBackground},
           headerTintColor: theme.title,
         }}

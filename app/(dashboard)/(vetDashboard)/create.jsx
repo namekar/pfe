@@ -21,15 +21,15 @@ const Create = () => {
   const [medical_history, setHistory] = useState("")
   const [vaccinations,setVaccinations] = useState("")
   const [notes, setnotes] = useState("")
-  const { createAnimal } = useAnimals()
+  const { createAnimal } = useAnimals("")
   const router = useRouter()
 
   async function handleSubmit() {
-    if (!name.trim() /*|| !owner.trim()*/ || !description.trim() || !species.trim() || !breed.trim() || !age.trim() || !weight.trim() || !medical_history() || !vaccinations() || !notes()) return
+    if (!name.trim() /*|| !owner.trim()*/ || !description.trim() || !species.trim() || !breed.trim() || !age.trim() || !weight.trim() || !medical_history.trim() || !vaccinations.trim() || !notes.trim()) return
 
     setLoading(true)
     
-    await createAnimal({ name, description, species, breed, age: parseInt(age, 10), weight: parseInt(weight, 10),medical_history, vaccinations,notes })
+    await createAnimal({ name, description, species, breed, medical_history, vaccinations,notes, age: parseInt(age, 10), weight: parseInt(weight, 10) })
 
     setSpecies("")
     setName("")
@@ -111,6 +111,27 @@ const Create = () => {
             value={species}
             onChangeText={setSpecies}
             multiline={true}
+          />
+          <Spacer />
+          <ThemedTextInput
+            style={styles.input}
+            placeholder="medical_history"
+            value={medical_history}
+            onChangeText={setHistory}
+          />
+          <Spacer />
+          <ThemedTextInput
+            style={styles.input}
+            placeholder="vaccinations"
+            value={vaccinations}
+            onChangeText={setVaccinations}
+          />
+          <Spacer />
+          <ThemedTextInput
+            style={styles.input}
+            placeholder="notes"
+            value={notes}
+            onChangeText={setnotes}
           />
           <Spacer />
           <ThemedTextInput
