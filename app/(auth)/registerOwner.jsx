@@ -1,38 +1,49 @@
-import { StyleSheet, Text, Keyboard, TouchableWithoutFeedback, TextInput, ActivityIndicator } from 'react-native'
+import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native'
 import { Link } from 'expo-router'
 import { useState } from 'react'
-import { useUser } from '../../hooks/useUser'
-
+import { useUser } from '@/hooks/useUser'
 import ThemedView from '../../components/ThemedView'
 import ThemedText from '../../components/ThemedText'
 import Spacer from '../../components/Spacer'
 import ThemedButton from '../../components/ThemedButton'
 import ThemedTextInput from "../../components/ThemedTextInput"
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { View } from 'react-native-web'
 
-const Login = () => {
+const Register = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [name, setName] =useState("")
+  
 
-  const {login} = useUser()
-
+  const { register} = useUser()
   const handleSubmit = async () => {
     try {
-      await login(email, password)
+      await register(email, password,"Owner", name)
     } catch (error){
-      
+      console.log(error.message)
     }
   }
 
+  
+
   return (
     
+    <TouchableWithoutFeedback>
       <ThemedView style={styles.container}>
-        
+
         <Spacer />
         <ThemedText title={true} style={styles.title}>
-          Login to Your Account
+          Register an Account
         </ThemedText>
-        
+
         <Spacer />
+        <ThemedTextInput
+          style={{ marginBottom: 20, width: "80%" }}
+          placeholder="name"
+          value={name}
+          onChangeText={setName}
+        />
         <ThemedTextInput
           style={{ marginBottom: 20, width: "80%" }}
           placeholder="Email"
@@ -48,27 +59,26 @@ const Login = () => {
           onChangeText={setPassword}
           secureTextEntry
         />
+        
 
         <ThemedButton onPress={handleSubmit}>
-          <Text style={{ color: '#f2f2f2' }}>Login</Text>
+          <Text style={{ color: '#f2f2f2' }}>Register</Text>
         </ThemedButton>
 
         <Spacer height={100} />
-        <Link href="../roleChoice" replace>
+        <Link href="/login" replace>
           <ThemedText style={{ textAlign: "center" }}>
-            Register instead
+            Login instead
           </ThemedText>
         </Link>
 
-
-        
-
       </ThemedView>
+    </TouchableWithoutFeedback>
     
   )
 }
 
-export default Login
+export default Register
 
 const styles = StyleSheet.create({
   container: {
@@ -80,5 +90,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     marginBottom: 30
-  }
+  },
+  
+  
+  
 })
