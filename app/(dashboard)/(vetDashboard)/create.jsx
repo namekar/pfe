@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import { ScrollView, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native'
 import { useAnimals } from "../../../hooks/useAnimals"
+import ThemedPullDownMenu from "../../../components/ThemedPullDownMenu"
 
 import Spacer from '../../../components/Spacer'
 import ThemedButton from '../../../components/ThemedButton'
@@ -24,6 +25,30 @@ const Create = () => {
   const { createAnimal } = useAnimals("")
   const router = useRouter()
 
+
+
+  const SPECIES = [
+  { label: "Dog", value: "dog" },
+  { label: "Cat", value: "cat" },
+  { label: "Bird", value: "bird" },
+  { label: "Rabbit", value: "rabbit" },
+  ];
+  const BREED = [
+  { label: "Labrador Retriever", value: "labrador" },
+  { label: "German Shepherd", value: "german_shepherd" },
+  { label: "Golden Retriever", value: "golden_retriever" },
+  { label: "Bulldog", value: "bulldog" },
+  { label: "Poodle", value: "poodle" },
+  { label: "Rottweiler", value: "rottweiler" },
+  { label: "Beagle", value: "beagle" },
+  { label: "Siberian Husky", value: "husky" },
+  { label: "Chihuahua", value: "chihuahua" },
+  { label: "Boxer", value: "boxer" },
+];
+
+
+
+
   async function handleSubmit() {
     if (!name.trim() /*|| !owner.trim()*/ || !description.trim() || !species.trim() || !breed.trim() || !age.trim() || !weight.trim() || !medical_history.trim() || !vaccinations.trim() || !notes.trim()) return
 
@@ -33,7 +58,6 @@ const Create = () => {
 
     setSpecies("")
     setName("")
-    /*setOwner("")*/
     setDescription("")
     setBreed("")
     setWeight("")
@@ -49,136 +73,185 @@ const Create = () => {
   }
 
    return (
-      <ScrollView>
-      <TouchableWithoutFeedback> 
-        
-        <ThemedView style={styles.container}>
-  
+  <ScrollView contentContainerStyle={styles.scroll}>
+    <TouchableWithoutFeedback>
+      <ThemedView style={styles.container}>
+
+        {/* Header Card */}
+        <View style={styles.card}>
           <ThemedText title={true} style={styles.heading}>
             Add a New Animal
           </ThemedText>
-          <Spacer />
-  
+        </View>
+
+        {/* Main Form Card */}
+        <View style={styles.card}>
+          
+          <ThemedText style={styles.label}>Name</ThemedText>
           <ThemedTextInput
             style={styles.input}
             placeholder="name"
             value={name}
             onChangeText={setName}
           />
-          <Spacer />
+
+          <ThemedText style={styles.label}>Species</ThemedText>
+          <ThemedPullDownMenu
+            label=""
+            selectedValue={species}
+            onValueChange={setSpecies}
+            items={SPECIES}
+          />
+
+          <ThemedText style={styles.label}>Breed</ThemedText>
+          <ThemedPullDownMenu
+            label=""
+            selectedValue={breed}
+            onValueChange={setBreed}
+            items={BREED}
+          />
+
+          <View style={styles.row}>
+            <View style={styles.half}>
+              <ThemedText style={styles.label}>Age</ThemedText>
+              <ThemedTextInput
+                style={styles.input}
+                value={age}
+                keyboardType="numeric"
+                onChangeText={(text) => {
+                  const cleaned = text.replace(/[^0-9]/g, "");
+                  setAge(cleaned);
+                }}
+              />
+            </View>
+
+            <View style={styles.half}>
+              <ThemedText style={styles.label}>Weight</ThemedText>
+              <ThemedTextInput
+                style={styles.input}
+                value={weight}
+                keyboardType="numeric"
+                onChangeText={(text) => {
+                  const cleaned = text.replace(/[^0-9]/g, "");
+                  setWeight(cleaned);
+                }}
+              />
+            </View>
+          </View>
+
+          <ThemedText style={styles.label}>Medical History</ThemedText>
           <ThemedTextInput
             style={styles.input}
-            placeholder="breed"
-            value={breed}
-            onChangeText={setBreed}
-          />
-          <Spacer />
-          <ThemedTextInput
-            style={styles.input}
-            placeholder="age"
-            value={age}
-            keyboardType="numeric"
-            onChangeText={(text) => {
-            const cleaned = text.replace(/[^0-9]/g, "");
-            setAge(cleaned);}
-            }
-          />
-          <Spacer />
-          <ThemedTextInput
-            style={styles.input}
-            placeholder="weight"
-            value={weight}
-            keyboardType="numeric"
-            onChangeText={(text) => {
-            
-            const cleaned = text.replace(/[^0-9]/g, "");
-            setWeight(cleaned);
-            }}
-          />
-          <Spacer />
-  
-          {/*<ThemedTextInput
-            style={styles.input}
-            placeholder="owner"
-            value={owner}
-            onChangeText={setOwner}
-          />
-          <Spacer />*/}
-  
-          <ThemedTextInput
-            style={styles.multiline}
-            placeholder="species"
-            value={species}
-            onChangeText={setSpecies}
-            multiline={true}
-          />
-          <Spacer />
-          <ThemedTextInput
-            style={styles.input}
-            placeholder="medical_history"
             value={medical_history}
             onChangeText={setHistory}
           />
-          <Spacer />
+
+          <ThemedText style={styles.label}>Vaccinations</ThemedText>
           <ThemedTextInput
             style={styles.input}
-            placeholder="vaccinations"
             value={vaccinations}
             onChangeText={setVaccinations}
           />
-          <Spacer />
+
+          <ThemedText style={styles.label}>Notes</ThemedText>
           <ThemedTextInput
             style={styles.input}
-            placeholder="notes"
             value={notes}
             onChangeText={setnotes}
           />
-          <Spacer />
+
+          <ThemedText style={styles.label}>Description</ThemedText>
           <ThemedTextInput
             style={styles.multiline}
-            placeholder="Description"
             value={description}
             onChangeText={setDescription}
             multiline={true}
           />
+
           <Spacer />
-  
+
           <ThemedButton onPress={handleSubmit} disabled={loading}>
-            <Text style={{ color: '#fff' }}>
+            <Text style={{ color: "#fff" }}>
               {loading ? "Saving..." : "Add animal"}
             </Text>
           </ThemedButton>
+
+        </View>
+
+      </ThemedView>
+    </TouchableWithoutFeedback>
+  </ScrollView>
+);
   
-        </ThemedView>
-      </TouchableWithoutFeedback>
-      </ScrollView>
-    )
-  }
-  
-  export default Create
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    heading: {
-      fontWeight: "bold",
-      fontSize: 18,
-      textAlign: "center",
-    },
-    input: {
-      padding: 20,
-      borderRadius: 6,
-      alignSelf: 'stretch',
-      marginHorizontal: 40,
-    },
-    multiline: {
-      padding: 20,
-      borderRadius: 6,
-      minHeight: 100,
-      alignSelf: 'stretch',
-      marginHorizontal: 40,
-    },
-  })
+  const COLORS = {
+  primary: '#32B36A',
+  background: '#F7FBF5',
+  text: '#0E2A1F',
+  muted: '#6B887A',
+};
+
+const styles = StyleSheet.create({
+  scroll: {
+    padding: 20,
+    backgroundColor: COLORS.background,
+    alignItems: "center",
+  },
+
+  container: {
+    width: "100%",
+    maxWidth: 600,
+  },
+
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: "#00000010",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+
+  heading: {
+    fontWeight: "700",
+    fontSize: 18,
+    color: COLORS.text,
+    textAlign: "center",
+  },
+
+  label: {
+    marginTop: 12,
+    marginBottom: 6,
+    color: COLORS.muted,
+    fontSize: 13,
+  },
+
+  input: {
+    padding: 14,
+    borderRadius: 10,
+    backgroundColor: "#F9F9F9",
+    borderWidth: 1,
+    borderColor: "#eee",
+  },
+
+  multiline: {
+    padding: 14,
+    borderRadius: 10,
+    backgroundColor: "#F9F9F9",
+    borderWidth: 1,
+    borderColor: "#eee",
+    minHeight: 100,
+  },
+
+  row: {
+    flexDirection: "row",
+    marginTop: 10,
+  },
+
+  half: {
+    flex: 1,
+    marginRight: 8,
+  },
+})}

@@ -1,7 +1,7 @@
 import { ActivityIndicator, useColorScheme } from "react-native";
 import {Colors} from "../constants/colors"
 import ThemedView from './ThemedView'
-
+import LottieView from "lottie-react-native";
 
 const ThemedLoader = () => {
     const colorScheme = useColorScheme()
@@ -15,7 +15,12 @@ const ThemedLoader = () => {
             justifyContent: 'center',
             alignItems: 'center'
         }}>
-        <ActivityIndicator size="large" color={theme.text} />
+        <LottieView
+            source={require("../assets/animations/Davsan.json")}
+            autoPlay
+            loop
+            style={{ width: 200, height: 200 }}
+          />
         </ThemedView>
     )
 }

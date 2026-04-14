@@ -1,138 +1,288 @@
-import { Pressable, StyleSheet, Text, View, Animated } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  ScrollView,
+  SafeAreaView,
+  useWindowDimensions
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useState, useRef } from "react";
+import LottieView from "lottie-react-native";
+
+const COLORS = {
+  primary: "#32B36A",
+  primaryDark: "#1F8A47",
+  background: "#F7FBF5",
+  card: "#E6F7EA",
+  cardSelected: "#DAF6E1",
+  text: "#0E2A1F",
+  muted: "#6B887A"
+};
+
 export default function ChoiceScreen() {
   const router = useRouter();
+  const { width } = useWindowDimensions();
+
+  const isDesktop = width > 768;
+
   const handlePressVet = () => {
-    router.push('./(auth)/register');
-  }
-  const handlePressOwner = () =>{
-    router.push('./(auth)/registerOwner')
-  }
+    router.push("./(auth)/register");
+  };
+
+  const handlePressOwner = () => {
+    router.push("./(auth)/registerOwner");
+  };
+
   const topScale = useRef(new Animated.Value(1)).current;
   const bottomScale = useRef(new Animated.Value(1)).current;
+
   const [isTopHovered, setIsTopHovered] = useState(false);
   const [isBottomHovered, setIsBottomHovered] = useState(false);
 
-
-  const animateIn = (anim)=> {
+  const animateIn = (anim) => {
     Animated.timing(anim, {
       toValue: 1.05,
       duration: 150,
       useNativeDriver: true,
     }).start();
   };
+
   const animateOut = (anim) => {
-    Animated.timing(anim,{
-      toValue:1,
+    Animated.timing(anim, {
+      toValue: 1,
       duration: 150,
       useNativeDriver: true,
     }).start();
   };
 
   return (
-    
-    <View style={styles.container}>
-      <Animated.View style={{ transform: [{ scale: topScale}], flex:1 }}>
+    <SafeAreaView style={styles.safe}>
+      <ScrollView contentContainerStyle={styles.container}>
         
-      <Pressable 
-        onPress={handlePressVet}    
-        style={[styles.half1,
-          isTopHovered ? styles.topHover : styles.top]}
-        onHoverIn={()=> {setIsTopHovered(true); animateIn(topScale);}}
-        onHoverOut={()=> {setIsTopHovered(false); animateOut(topScale);}}
+        <Text style={styles.logo}>VetPaws</Text>
+
+        <Text style={styles.hero}>
+          Welcome to the future of{" "}
+          <Text style={{ color: COLORS.primary }}>pet care.</Text>
+        </Text>
+
+        <Text style={styles.subtitle}>
+          Please select the account type that best describes your role.
+        </Text>
+
+        <View
+          style={[
+            styles.list,
+            isDesktop && { flexDirection: "row", gap: 20 }
+          ]}
         >
-        <Text style={styles.text}>Veterinary account</Text>
-        <Text style={styles.paragraph}>Lorem ipsum, dolor sit tes, magnam, suscipit <br/>assumenda iusto non! Minima quae optio dolorem quos nemo.</Text>
-      </Pressable>
-      </Animated.View>
-      <Animated.View style={{ transform: [{ scale: bottomScale}], flex:1 }}>
-      <Pressable
-        onPress={handlePressOwner}
-        style={[styles.half,
-          isBottomHovered ? styles.bottomHover : styles.bottom]}
-        onHoverIn={()=> {setIsBottomHovered(true); animateIn(bottomScale);}}
-        onHoverOut={()=> {setIsBottomHovered(false); animateOut(bottomScale);}}
-        >
-        <Text style={styles.text2}>Owner account</Text>
-        <Text style={styles.paragraph2}>Lorem ipsum, dolor sit tes, magnam, suscipit <br/>assumenda iusto non! Minima quae optio dolorem quos nemo.</Text>
-      </Pressable>
-      </Animated.View>
-    </View>
+          <Animated.View style={{ flex: 1, transform: [{ scale: topScale }] }}>
+            <Pressable
+              onPress={handlePressVet}
+              style={[
+                styles.bubble,
+                isTopHovered ? styles.bubbleSelected : styles.bubbleDefault
+              ]}
+              onHoverIn={() => {
+                setIsTopHovered(true);
+                animateIn(topScale);
+              }}
+              onHoverOut={() => {
+                setIsTopHovered(false);
+                animateOut(topScale);
+              }}
+            >
+              <Text style={[
+                styles.roleTitle,
+                isTopHovered && { color: COLORS.primaryDark }
+              ]}>
+                Veterinary Medical Professional
+              </Text>
+
+              <Text style={styles.roleSubtitle}>
+                Access clinical tools, patient records, and practice settings.
+              </Text>
+
+              <Text style={styles.roleHint}>
+                Professional verified • Practice tools
+              </Text>
+              <View style={styles.chipsContainer}>
+                <View style={styles.chip}>
+                  <Text style={styles.chipText}>Patient Records</Text>
+                </View>
+                <View style={styles.chip}>
+                 <Text style={styles.chipText}>Appointments</Text>
+                </View>
+                <View style={styles.chip}>
+                  <Text style={styles.chipText}>Analytics</Text>
+                </View>
+              </View>
+            </Pressable>
+          </Animated.View>
+
+          <Animated.View style={{ flex: 1, transform: [{ scale: bottomScale }] }}>
+            <Pressable
+              onPress={handlePressOwner}
+              style={[
+                styles.bubble,
+                isBottomHovered ? styles.bubbleSelected : styles.bubbleDefault
+              ]}
+              onHoverIn={() => {
+                setIsBottomHovered(true);
+                animateIn(bottomScale);
+              }}
+              onHoverOut={() => {
+                setIsBottomHovered(false);
+                animateOut(bottomScale);
+              }}
+            >
+              <Text style={[
+                styles.roleTitle,
+                isBottomHovered && { color: COLORS.primaryDark }
+              ]}>
+                Dedicated Pet Owner
+              </Text>
+
+              <Text style={styles.roleSubtitle}>
+                Manage your pet’s health, appointments, and records.
+              </Text>
+
+              <Text style={styles.roleHint}>
+                Health tracking • Secure records
+              </Text>
+              <View style={styles.chipsContainer}>
+                <View style={styles.chip}>
+                  <Text style={styles.chipText}>Health Tracking</Text>
+                </View>
+                <View style={styles.chip}>
+                  <Text style={styles.chipText}>Reminders</Text>
+                </View>
+                <View style={styles.chip}>
+                 <Text style={styles.chipText}>Vet Access</Text>
+                </View>
+              </View>
+            </Pressable>
+          </Animated.View>
+        </View>
+
+        
+        <View style={styles.lottieContainer}>
+          <LottieView
+            source={require("../assets/animations/Happy Dog.json")}
+            autoPlay
+            loop
+            style={{ width: 200, height: 200 }}
+          />
+        </View>
+
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safe: {
     flex: 1,
-    backgroundColor: "#F4FBF7",
+    backgroundColor: COLORS.background
   },
-  half: {
-    flex: 1, 
-    marginLeft: "4%",
-    marginBottom: "4%",
-    marginRight: "4%",
-    marginTop: "2%",
-    borderRadius: "3%",
-    shadowColor: "#000",
-    shadowOpacity: 1,
-    shadowRadius : 10,
-    elevation: 5,
-    
-    
+
+  container: {
+    alignItems: "center",
+    paddingTop: 40,
+    paddingBottom: 80,
+    paddingHorizontal: 20
   },
-  half1: {
-    flex: 1, 
-    marginTop: "4%",
-    marginLeft: "4%",
-    marginBottom: "2%",
-    marginRight: "4%",
-    borderRadius: "3%",
-    shadowColor: "#000",
-    shadowOpacity: 1,
-    shadowRadius : 10,
-    elevation: 5,
-    
-    
+
+  logo: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: COLORS.primary,
+    marginBottom: 6
   },
-  top: {
-    backgroundColor: "#2F6F4E",
+
+  hero: {
+    fontSize: 28,
+    fontWeight: "800",
+    textAlign: "center",
+    color: COLORS.text,
+    marginVertical: 8,
+    maxWidth: 800
   },
-  topHover:{
-    backgroundColor : "#87C1A3",
+
+  subtitle: {
+    textAlign: "center",
+    color: COLORS.muted,
+    marginBottom: 25,
+    maxWidth: 600
   },
-  bottom: {
-    backgroundColor: "#2F6F4E",
+
+  list: {
+    width: "100%",
+    maxWidth: 900
   },
-  bottomHover: {
-  backgroundColor: "#87C1A3",
-},
-  text: {
-    fontSize: 30,
-    color: "#2E8B57",
-    fontWeight: "bold",
-    marginTop: "2%",
-    marginLeft: "15%",
-  },text2: {
-    fontSize: 30,
-    color: "#2E8B57",
-    fontWeight: "bold",
-    marginTop: "2%",
-    marginLeft: "15%",
+
+  bubble: {
+    borderRadius: 18,
+    padding: 20,
+    marginBottom: 20,
+    borderWidth: 1
   },
-  paragraph:{
-    fontSize: 16,
-    color: "#2E8B57",
-    fontWeight: "bold",
-    marginTop: "2%",
-    marginLeft: "7%",
-    
+
+  bubbleDefault: {
+    backgroundColor: COLORS.card,
+    borderColor: "#E6F4EA"
   },
-  paragraph2:{
-    fontSize: 16,
-    color: "#2E8B57",
-    fontWeight: "bold",
-    marginTop: "2%",
-    marginLeft: "7%",
-  }
+
+  bubbleSelected: {
+    backgroundColor: COLORS.cardSelected,
+    borderColor: COLORS.primary
+  },
+
+  roleTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: COLORS.text,
+    marginBottom: 6
+  },
+
+  roleSubtitle: {
+    color: COLORS.muted,
+    marginBottom: 10
+  },
+
+  roleHint: {
+    color: COLORS.primary,
+    fontSize: 13,
+    fontWeight: "600"
+  },
+
+  lottieContainer: {
+    marginTop: 20,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  chipsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 8,
+    gap: 8
+  },
+
+  chip: {
+    backgroundColor: "#ffffff",
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#DCEFE0"
+  },
+
+  chipText: {
+    fontSize: 12,
+    color: "#1F8A47",
+    fontWeight: "600"
+  },
 });

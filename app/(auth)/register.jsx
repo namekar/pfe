@@ -1,4 +1,4 @@
-import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native'
+import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, ScrollView, View, Platform } from 'react-native'
 import { Link } from 'expo-router'
 import { useState } from 'react'
 import { useUser } from '@/hooks/useUser'
@@ -8,71 +8,81 @@ import Spacer from '../../components/Spacer'
 import ThemedButton from '../../components/ThemedButton'
 import ThemedTextInput from "../../components/ThemedTextInput"
 
+const COLORS = {
+  primary: '#32B36A',
+  primaryDark: '#1F8A47',
+  background: '#F7FBF5',
+  card: '#E6F7EA',
+  text: '#0E2A1F',
+  muted: '#6B887A'
+};
+
 const Register = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [name, setName] =useState("")
+  const [name, setName] = useState("")
 
-  const { register} = useUser()
+  const { register } = useUser()
   const handleSubmit = async () => {
     try {
-      
-      await register(email, password,"Vet", name)
-    } catch (error){
+      await register(email, password, "Vet", name)
+    } catch (error) {
       console.log(error.message)
     }
   }
 
-  
-
   return (
-    
-    <TouchableWithoutFeedback>
-      <ThemedView style={styles.container}>
+    <View
+      style={{ flex: 1, backgroundColor: COLORS.background }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.logo}>VetPaws</Text>
+        <Text style={styles.hero}>
+          Welcome to the future of <Text style={{ color: COLORS.primary }}>pet care.</Text>
+        </Text>
+        <Text style={styles.subtitle}>
+          Create your veterinarian account to access clinical tools, patient records and practice settings.
+        </Text>
 
-        <Spacer />
-        <ThemedText title={true} style={styles.title}>
-          Register an Account
-        </ThemedText>
+        <ThemedView style={styles.card}>
+          <Text style={styles.label}>Full name</Text>
+          <ThemedTextInput
+            style={styles.input}
+            placeholder="Dr. Alex Smith"
+            value={name}
+            onChangeText={setName}
+          />
 
-        <Spacer />
-        <ThemedTextInput
-          style={{ marginBottom: 20, width: "80%" }}
-          placeholder="name"
-          value={name}
-          onChangeText={setName}
-        />
-        <ThemedTextInput
-          style={{ marginBottom: 20, width: "80%" }}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
+          <Text style={styles.label}>Email</Text>
+          <ThemedTextInput
+            style={styles.input}
+            placeholder="you@clinic.com"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
 
-        <ThemedTextInput
-          style={{ marginBottom: 20, width: "80%" }}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        
+          <Text style={styles.label}>Password</Text>
+          <ThemedTextInput
+            style={styles.input}
+            placeholder="Enter password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
 
-        <ThemedButton onPress={handleSubmit}>
-          <Text style={{ color: '#f2f2f2' }}>Register</Text>
-        </ThemedButton>
+          <ThemedButton style={styles.cta} onPress={handleSubmit}>
+            <Text style={styles.ctaText}>Register</Text>
+          </ThemedButton>
 
-        <Spacer height={100} />
-        <Link href="/login" replace>
-          <ThemedText style={{ textAlign: "center" }}>
-            Login instead
-          </ThemedText>
-        </Link>
-
-      </ThemedView>
-    </TouchableWithoutFeedback>
-    
+          <Link href="/login" replace>
+            <Text style={styles.backText}>Login instead</Text>
+          </Link>
+        </ThemedView>
+      </ScrollView>
+    </View>
   )
 }
 
@@ -80,23 +90,76 @@ export default Register
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    alignItems: 'center',
+    paddingTop: 40,
+    paddingBottom: 80,
+    paddingHorizontal: 24
   },
-  title: {
-    textAlign: "center",
+  logo: {
     fontSize: 18,
-    marginBottom: 30
+    fontWeight: '700',
+    color: COLORS.primary,
+    marginBottom: 8
   },
-  selectedOption: {
-    borderColor: "#00893e",
-    borderWidth: 2
+  hero: {
+    fontSize: 34,
+    fontWeight: '800',
+    textAlign: 'center',
+    color: COLORS.text,
+    marginVertical: 12
   },
-  Option: {
-  marginHorizontal: 50,
+  subtitle: {
+    textAlign: 'center',
+    color: COLORS.muted,
+    marginBottom: 20,
+    maxWidth: 920
   },
-  row:{
-    flexDirection: "row",
+  card: {
+    width: '100%',
+    maxWidth: 920,
+    borderRadius: 18,
+    backgroundColor: COLORS.card,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOpacity: 0.03,
+    shadowRadius: 8,
+    elevation: 2,
+    alignItems: 'center'
+  },
+  label: {
+    color: COLORS.text,
+    fontWeight: '600',
+    marginTop: 12,
+    marginBottom: 6,
+    alignSelf: 'flex-start'
+  },
+  input: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderColor: '#E4EFE6',
+    borderWidth: 1,
+    color: COLORS.text,
+    marginBottom: 16
+  },
+  cta: {
+    marginTop: 18,
+    backgroundColor: COLORS.primary,
+    paddingVertical: 16,
+    borderRadius: 30,
+    alignItems: 'center',
+    width: '100%'
+  },
+  ctaText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16
+  },
+  backText: {
+    color: COLORS.primaryDark,
+    marginTop: 12,
+    textAlign: 'center'
   }
 })
