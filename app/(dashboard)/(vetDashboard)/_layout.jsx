@@ -7,14 +7,14 @@ import UserOnly from "../../../components/auth/UserOnly"
 
 export default function DashboardLayout() {
   const colorScheme = useColorScheme()
-  const theme = Colors[colorScheme] ?? Colors.light
+  const theme =  Colors.light
 
   return (
     <UserOnly>
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { backgroundColor: theme.navBackground, paddingTop: 10, height: 90 },
+        tabBarStyle: {  paddingTop: 10, height: 90 },
         tabBarActiveTintColor: theme.iconColorFocused,
         tabBarInactiveTintColor: theme.iconColor,
       }}

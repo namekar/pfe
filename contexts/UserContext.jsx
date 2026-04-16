@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { ID } from "react-native-appwrite";
 import { account, databases } from "../lib/appwrite";
+import { Text } from "react-native";
 export const UserContext = createContext()
 const DATABASE_ID = "69b9f57d000b139ece20"
 const USER_ID = "users"
