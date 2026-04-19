@@ -5,12 +5,14 @@ import { client, databases } from "../lib/appwrite";
 
 const DATABASE_ID = "69b9f57d000b139ece20"
 const COLLECTION_ID = "animals"
+const OWNER_COLLECTION_ID = "owners"
 
 export const AnimalsContext = createContext()
 
 export function AnimalsProvider({ children }){
     const [animals, setAnimals] = useState([])
     const {user} = useUser()
+    const [owners, setOwners] = useState([])
 
     async function fetchAnimals(){
         try {
@@ -18,7 +20,7 @@ export function AnimalsProvider({ children }){
                 DATABASE_ID,
                 COLLECTION_ID,
                 [
-                    Query.equal('OwnerId',user.$id),
+                    
                     Query.equal('VetId',user.$id)
                 ]
             )
@@ -41,6 +43,44 @@ export function AnimalsProvider({ children }){
             console.error(error.message)
         }
     }
+    async function fetchOwners(){
+        try {
+            const res = await databases.listDocuments(
+                DATABASE_ID,
+                OWNER_COLLECTION_ID,
+                [Query.equal('vetId', user.$id)]
+            )
+
+            setOwners(res.documents)
+        } catch (error){
+            console.log(error.message)
+        }
+    }
+    async function createOwner(data){
+        try {
+            if (!user) throw new Error("User not ready")
+
+            const owner = await databases.createDocument(
+                DATABASE_ID,
+                OWNER_COLLECTION_ID,
+                ID.unique(),
+                {
+                    name: data.name,
+                    email: data.email,
+                    phone: data.phone,
+                    vetId: user.$id
+                }
+            )
+
+            setOwners(prev => [owner, ...prev])
+
+            return owner
+
+        } catch (error){
+            console.error("CREATE OWNER ERROR:", error)
+            return null
+        }
+    }
     async function createAnimal(data){
         try{
             const newAnimal = await databases.createDocument(
@@ -48,8 +88,8 @@ export function AnimalsProvider({ children }){
                 COLLECTION_ID,
                 ID.unique(),
                 {...data,
-                    OwnerId: data.OwnerId ||  user.$id,
-                    VetId: data.VetId || (user.role === "Vet" ? user.$id: null),
+                    OwnerId: data.OwnerId,
+                    VetId:  user.$id
                 },
                 [
                     Permission.read(Role.user(user.$id)),
@@ -57,6 +97,8 @@ export function AnimalsProvider({ children }){
                     Permission.delete(Role.user(user.$id))
                 ]
             )
+            
+            return newAnimal
             
         }catch (error){
             console.error(error.message)
@@ -107,7 +149,7 @@ export function AnimalsProvider({ children }){
     
     return (
         <AnimalsContext.Provider 
-            value={{animals, fetchAnimals, fetchAnimalById, createAnimal, DeleteAnimal}}
+            value={{animals, fetchAnimals, fetchAnimalById, createAnimal, DeleteAnimal, owners, fetchOwners,createOwner}}
         >
             {children}
         </AnimalsContext.Provider>

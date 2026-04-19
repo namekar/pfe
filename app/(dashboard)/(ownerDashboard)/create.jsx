@@ -15,7 +15,6 @@ const Create = () => {
   const [breed, setBreed] = useState("")
   const [age, setAge] = useState("")
   const [weight, setWeight] = useState("")
-  /*const [owner, setOwner] = useState("")*/
   const [description, setDescription] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -23,7 +22,7 @@ const Create = () => {
   const router = useRouter()
 
   async function handleSubmit() {
-    if (!name.trim() /*|| !owner.trim()*/ || !description.trim() || !species.trim() || !breed.trim() || !age.trim() || !weight.trim()) return
+    if (!name.trim() || !description.trim() || !species.trim() || !breed.trim() || !age.trim() || !weight.trim()) return
 
     setLoading(true)
     

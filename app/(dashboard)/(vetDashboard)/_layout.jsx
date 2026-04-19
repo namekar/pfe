@@ -14,7 +14,7 @@ export default function DashboardLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: {  paddingTop: 10, height: 90 },
+        tabBarStyle: {  display: "none" },
         tabBarActiveTintColor: theme.iconColorFocused,
         tabBarInactiveTintColor: theme.iconColor,
       }}

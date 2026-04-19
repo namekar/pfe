@@ -1,30 +1,24 @@
 import { useRouter } from 'expo-router'
 import { useState } from 'react'
+import { useEffect } from 'react'
 import {
+  Alert,
+  FlatList,
+  Image,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-  Pressable,
-  TextInput,
   TouchableOpacity,
-  Modal,
-  FlatList,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  Image
+  View
 } from 'react-native'
 
-import { useAnimals } from "../../../hooks/useAnimals"
-import ThemedPullDownMenu from "../../../components/ThemedPullDownMenu"
-import Spacer from '../../../components/Spacer'
-import ThemedButton from '../../../components/ThemedButton'
 import ThemedText from "../../../components/ThemedText"
 import ThemedTextInput from "../../../components/ThemedTextInput"
-import ThemedView from "../../../components/ThemedView"
+import { useAnimals } from "../../../hooks/useAnimals"
 
 // Theme tokens matching first design
 const COLORS = {
@@ -44,6 +38,9 @@ const SPECIES_OPTIONS = ['Dog', 'Cat', 'Other']
 const uid = () => Math.random().toString(36).slice(2, 9)
 
 const Create = () => {
+  useEffect(() => {
+    fetchOwners()
+  }, [])
   // Identity
   const [photo, setPhoto] = useState(null)
   const [name, setName] = useState("")
@@ -68,10 +65,7 @@ const Create = () => {
   const [notes, setnotes] = useState("")
   
   // Owner
-  const [ownerList, setOwnerList] = useState([
-    { id: 'o1', name: 'Alex Ramirez', email: 'alex@example.com', phone: '+1 555 1234' },
-    { id: 'o2', name: 'Maya Patel', email: 'maya@example.com', phone: '+1 555 5678' }
-  ])
+  
   const [selectedOwnerId, setSelectedOwnerId] = useState(null)
   const [ownerModalVisible, setOwnerModalVisible] = useState(false)
   const [newOwner, setNewOwner] = useState({ name: '', email: '', phone: '' })
@@ -79,7 +73,7 @@ const Create = () => {
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
 
-  const { createAnimal } = useAnimals("")
+  const { createAnimal, owners, fetchOwners, createOwner } = useAnimals()
   const router = useRouter()
 
   const isSaveEnabled = name.trim() && species && selectedOwnerId
@@ -91,14 +85,15 @@ const Create = () => {
   }
 
   // Owner functions
-  const addOwnerInline = () => {
+  const addOwnerInline = async () => {
     if (!newOwner.name || !newOwner.email || !newOwner.phone) {
       Alert.alert('Missing info', 'Please fill name, email and phone.')
       return
     }
-    const created = { id: uid(), ...newOwner }
-    setOwnerList((s) => [created, ...s])
-    setSelectedOwnerId(created.id)
+
+    const owner = await createOwner(newOwner)
+
+    setSelectedOwnerId(owner.$id)
     setNewOwner({ name: '', email: '', phone: '' })
     setOwnerModalVisible(false)
   }
@@ -152,7 +147,7 @@ const Create = () => {
       microchip,
       color: colorText,
       dob: dob ? formatDate(dob) : '',
-      ownerId: selectedOwnerId
+      OwnerId: selectedOwnerId
     })
 
     // Reset form
@@ -297,15 +292,15 @@ const Create = () => {
             <ThemedText style={styles.sectionTitle}>Owner assignment *</ThemedText>
             <View style={{ marginTop: 8 }}>
               <FlatList
-                data={ownerList}
-                keyExtractor={(o) => o.id}
+                data={owners}
+                keyExtractor={(o) => o.$id}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => {
                   const isSelected = item.id === selectedOwnerId
                   return (
                     <TouchableOpacity 
-                      onPress={() => setSelectedOwnerId(item.id)} 
+                      onPress={() => setSelectedOwnerId(item.$id)} 
                       style={[styles.ownerChip, isSelected && { borderColor: COLORS.primary, backgroundColor: COLORS.cardSelected }]}
                     >
                       <ThemedText style={{ fontWeight: '600', color: isSelected ? COLORS.primaryDark : COLORS.text }}>{item.name}</ThemedText>
