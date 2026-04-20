@@ -22,18 +22,30 @@ const Animals = () => {
             data={animals}
             keyExtractor={(item) => item.$id}
             contentContainerStyle={styles.list}
-            renderItem={({item})=>(
-                <Pressable onPress={()=> router.push(`/animals/${item.$id}`)}>
-                    <ThemedCard style={styles.card}>
-                        <ThemedText style={styles.name}>
-                            {item.name}
-                        </ThemedText>
-                        <ThemedText >
-                            owner is {item.owner}
-                        </ThemedText>
+            renderItem={({ item }) => (
+              <Pressable onPress={() => router.push(`/animals/${item.$id}`)}>
+                <ThemedCard style={styles.card}>
+                  
+                  <ThemedText style={styles.name}>
+                    {item.name}
+                  </ThemedText>
 
-                    </ThemedCard>
-                </Pressable>
+                  <ThemedText style={styles.meta}>
+                    {item.species} {item.breed ? `• ${item.breed}` : ''}
+                  </ThemedText>
+
+                  <ThemedText style={styles.meta}>
+                    {item.sex ? item.sex : 'Unknown'} 
+                    {item.age ? ` • ${item.age} yrs` : ''}
+                    {item.weight ? ` • ${item.weight} kg` : ''}
+                  </ThemedText>
+
+                  <ThemedText style={styles.meta}>
+                    Owner ID: {item.OwnerId}
+                  </ThemedText>
+
+                </ThemedCard>
+              </Pressable>
             )}
         />
     </ThemedView>
@@ -69,5 +81,10 @@ const styles = StyleSheet.create({
     fontSize:20,
     fontWeight: "bold",
     marginBottom: 10,
+  },
+  meta: {
+  fontSize: 13,
+  color: '#6B887A',
+  marginBottom: 4,
   },
 })

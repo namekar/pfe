@@ -1,10 +1,9 @@
-import { StyleSheet, Text, View } from 'react-native'
-import { router, useLocalSearchParams, useRouter } from 'expo-router'
+import { StyleSheet, Text } from 'react-native'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 
 import ThemedView from "../../../../components/ThemedView"
 import ThemedText from "../../../../components/ThemedText"
-import ThemedTextInput from "../../../../components/ThemedTextInput"
 import ThemedButton from '../../../../components/ThemedButton'
 import Spacer from '../../../../components/Spacer'
 import { useAnimals } from '../../../../hooks/useAnimals'
@@ -15,63 +14,132 @@ import { Colors } from '../../../../constants/colors'
 const AnimalDetails = () => {
     const [animal, setAnimal] = useState(null)
     const { id } = useLocalSearchParams()
-    const {fetchAnimalById, DeleteAnimal} = useAnimals()
+    const { fetchAnimalById, DeleteAnimal, owners } = useAnimals()
     const router = useRouter()
+
+    const getOwnerName = (id) => {
+        return owners?.find(o => o.$id === id)?.name || "Unknown"
+    }
+
     const handleDelete = async () => {
         await DeleteAnimal(id)
         setAnimal(null)
         router.replace('/animals')
     }
 
-    useEffect(()=>{
-        async function loadAnimal(){
+    useEffect(() => {
+        async function loadAnimal() {
             const animalData = await fetchAnimalById(id)
             setAnimal(animalData)
         }
         loadAnimal()
-    },[id])
+    }, [id])
 
-if (!animal){
+    if (!animal) {
+        return (
+            <ThemedView safe={true} style={styles.container}>
+                <ThemedLoader />
+            </ThemedView>
+        )
+    }
+
     return (
         <ThemedView safe={true} style={styles.container}>
-            <ThemedLoader/>
+            <ThemedCard style={styles.card}>
+
+                {/* NAME */}
+                <ThemedText style={styles.name}>{animal.name}</ThemedText>
+
+                {/* OWNER */}
+                <ThemedText style={styles.meta}>
+                    Owner: {getOwnerName(animal.OwnerId)}
+                </ThemedText>
+
+                <Spacer />
+
+                {/* BASIC INFO */}
+                <ThemedText title={true}>Basic Info</ThemedText>
+                <Spacer height={10} />
+
+                <ThemedText style={styles.meta}>
+                    Species: {animal.species || '-'}
+                </ThemedText>
+
+                <ThemedText style={styles.meta}>
+                    Breed: {animal.breed || '-'}
+                </ThemedText>
+
+                <ThemedText style={styles.meta}>
+                    Sex: {animal.sex || 'Unknown'}
+                </ThemedText>
+
+                <ThemedText style={styles.meta}>
+                    Age: {animal.age ? `${animal.age} years` : '-'}
+                </ThemedText>
+
+                <ThemedText style={styles.meta}>
+                    Weight: {animal.weight ? `${animal.weight} kg` : '-'}
+                </ThemedText>
+
+                <Spacer />
+
+                {/* DESCRIPTION */}
+                <ThemedText title={true}>Description</ThemedText>
+                <Spacer height={10} />
+                <ThemedText>{animal.description || '-'}</ThemedText>
+
+                <Spacer />
+
+                {/* MEDICAL */}
+                <ThemedText title={true}>Medical</ThemedText>
+                <Spacer height={10} />
+
+                <ThemedText style={styles.meta}>
+                    History: {animal.medical_history || '-'}
+                </ThemedText>
+
+                <ThemedText style={styles.meta}>
+                    Vaccinations: {animal.vaccinations || 'None'}
+                </ThemedText>
+
+                <Spacer />
+
+                {/* NOTES */}
+                <ThemedText title={true}>Notes</ThemedText>
+                <Spacer height={10} />
+                <ThemedText>{animal.notes || '-'}</ThemedText>
+
+                {/* DELETE */}
+                <ThemedButton style={styles.delete} onPress={handleDelete}>
+                    <Text style={{ color: '#fff', textAlign: 'center' }}>
+                        Delete
+                    </Text>
+                </ThemedButton>
+
+            </ThemedCard>
         </ThemedView>
     )
-}
-
-  return (
-    <ThemedView safe={true} style={styles.container}>
-        <ThemedCard style={styles.card}>
-            <ThemedText style={styles.name}>{animal.name}</ThemedText>
-            <ThemedText> The owner is called {animal.owner}</ThemedText>
-            <Spacer/>
-
-            <ThemedText title={true}>Animal Description:</ThemedText>
-            <Spacer height={10}/>
-            <ThemedText>{animal.description}</ThemedText>
-            <ThemedButton style={styles.delete} onPress={handleDelete}>
-                <Text style={{color: '#fff', textAlign: 'center'}}>
-                    delete
-                </Text>
-            </ThemedButton>
-        </ThemedCard>
-    </ThemedView>
-  )
 }
 
 export default AnimalDetails
 
 const styles = StyleSheet.create({
-    container:{
+    container: {
         flex: 1,
         alignItems: "stretch",
     },
     name: {
         fontSize: 22,
         marginVertical: 10,
+        fontWeight: 'bold'
     },
-    card:{
+    card: {
         margin: 20
+    },
+    meta: {
+        fontSize: 14,
+        color: '#6B887A',
+        marginBottom: 6
     },
     delete: {
         marginTop: 40,

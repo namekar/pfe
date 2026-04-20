@@ -1,6 +1,5 @@
 import { useRouter } from 'expo-router'
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Alert,
   FlatList,
@@ -51,6 +50,22 @@ const Create = () => {
   const [microchip, setMicrochip] = useState("")
   const [colorText, setColorText] = useState("")
   const [description, setDescription] = useState("")
+  const BREEDS = {
+  Dog: [
+    "Labrador Retriever",
+    "German Shepherd",
+    "Golden Retriever",
+    "Bulldog",
+    "Poodle"
+  ],
+  Cat: [
+    "Persian",
+    "Maine Coon",
+    "Siamese",
+    "Bengal",
+    "Sphynx"
+  ]
+}
   
   // Physical
   const [age, setAge] = useState("")
@@ -225,7 +240,29 @@ const Create = () => {
 
                   <View style={{ flex: 1 }}>
                     <ThemedText style={styles.label}>Breed</ThemedText>
-                    <ThemedTextInput value={breed} onChangeText={setBreed} placeholder="Breed" style={styles.input} />
+                    {species && BREEDS[species] ? (
+                      <View style={styles.segment}>
+                        {BREEDS[species].map((b) => (
+                          <TouchableOpacity
+                            key={b}
+                            onPress={() => setBreed(b)}
+                            style={[
+                              styles.segmentItem,
+                              breed === b && { backgroundColor: COLORS.cardSelected }
+                            ]}
+                          >
+                            <ThemedText>{b}</ThemedText>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    ) : (
+                      <ThemedTextInput
+                        value={breed}
+                        onChangeText={setBreed}
+                        placeholder="Breed"
+                        style={styles.input}
+                      />
+                    )}
                   </View>
                 </View>
 
@@ -297,7 +334,7 @@ const Create = () => {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => {
-                  const isSelected = item.id === selectedOwnerId
+                  const isSelected = item.$id === selectedOwnerId
                   return (
                     <TouchableOpacity 
                       onPress={() => setSelectedOwnerId(item.$id)} 
