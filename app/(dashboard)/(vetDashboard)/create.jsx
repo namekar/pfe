@@ -1,30 +1,11 @@
 import { Feather, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons'
+import * as ImagePicker from 'expo-image-picker'
 import { useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Image,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from 'react-native'
-
-// Only import these on native platforms
-import * as ImagePicker from 'expo-image-picker'
-
+import { ActivityIndicator, Alert, FlatList, Image, KeyboardAvoidingView, Modal, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useAnimals } from "../../../hooks/useAnimals"
 import { COLORS, styles as globalStyles } from './CreateAnimalForm.styles'
 
-// Native-only imports
 let DateTimePicker = null
 if (Platform.OS !== 'web') {
   DateTimePicker = require('@react-native-community/datetimepicker').default
@@ -33,75 +14,83 @@ if (Platform.OS !== 'web') {
 const SEX_OPTIONS = ['Male', 'Female', 'Unknown']
 const SPECIES_OPTIONS = ['Dog', 'Cat', 'Other']
 
-// Extended list of domestic animals for "Other" category
 const OTHER_SPECIES_OPTIONS = [
-  "Rabbit",
-  "Guinea Pig",
-  "Hamster",
-  "Gerbil",
-  "Rat",
-  "Mouse",
-  "Ferret",
-  "Chinchilla",
-  "Hedgehog",
-  "Bird - Parrot",
-  "Bird - Cockatiel",
-  "Bird - Budgie",
-  "Bird - Canary",
-  "Bird - Finch",
-  "Bird - Macaw",
-  "Bird - African Grey",
-  "Bird - Cockatoo",
-  "Bird - Lovebird",
-  "Reptile - Bearded Dragon",
-  "Reptile - Leopard Gecko",
-  "Reptile - Ball Python",
-  "Reptile - Corn Snake",
-  "Reptile - Iguana",
-  "Reptile - Turtle",
-  "Reptile - Tortoise",
-  "Reptile - Chameleon",
-  "Amphibian - Frog",
-  "Amphibian - Toad",
-  "Amphibian - Salamander",
-  "Amphibian - Newt",
-  "Fish - Goldfish",
-  "Fish - Betta",
-  "Fish - Guppy",
-  "Fish - Koi",
-  "Farm Animal - Horse",
-  "Farm Animal - Pony",
-  "Farm Animal - Donkey",
-  "Farm Animal - Cow",
-  "Farm Animal - Goat",
-  "Farm Animal - Sheep",
-  "Farm Animal - Pig",
-  "Farm Animal - Chicken",
-  "Farm Animal - Duck",
-  "Farm Animal - Goose",
-  "Farm Animal - Llama",
-  "Farm Animal - Alpaca",
-  "Exotic - Sugar Glider",
-  "Exotic - Wallaby",
-  "Exotic - Kangaroo",
-  "Exotic - Fox",
-  "Exotic - Raccoon",
-  "Exotic - Skunk",
-  "Exotic - Monkey",
-  "Exotic - Sloth",
-  "Exotic - Anteater",
-  "Exotic - Armadillo",
-  "Marine - Dolphin",
-  "Marine - Seal",
-  "Marine - Sea Lion",
-  "Marine - Penguin",
-  "Marine - Sea Turtle",
-  "Other - Please specify"
+  { name: "Rabbit", icon: "🐰" },
+  { name: "Guinea Pig", icon: "🐹" },
+  { name: "Hamster", icon: "🐹" },
+  { name: "Gerbil", icon: "🐭" },
+  { name: "Rat", icon: "🐭" },
+  { name: "Mouse", icon: "🐭" },
+  { name: "Ferret", icon: "🦦" },
+  { name: "Chinchilla", icon: "🐭" },
+  { name: "Hedgehog", icon: "🦔" },
+  { name: "Bird - Parrot", icon: "🦜" },
+  { name: "Bird - Cockatiel", icon: "🐦" },
+  { name: "Bird - Budgie", icon: "🐦" },
+  { name: "Bird - Canary", icon: "🐦" },
+  { name: "Bird - Finch", icon: "🐦" },
+  { name: "Bird - Macaw", icon: "🦜" },
+  { name: "Bird - African Grey", icon: "🦜" },
+  { name: "Bird - Cockatoo", icon: "🦜" },
+  { name: "Bird - Lovebird", icon: "🦜" },
+  { name: "Reptile - Bearded Dragon", icon: "🦎" },
+  { name: "Reptile - Leopard Gecko", icon: "🦎" },
+  { name: "Reptile - Ball Python", icon: "🐍" },
+  { name: "Reptile - Corn Snake", icon: "🐍" },
+  { name: "Reptile - Iguana", icon: "🦎" },
+  { name: "Reptile - Turtle", icon: "🐢" },
+  { name: "Reptile - Tortoise", icon: "🐢" },
+  { name: "Reptile - Chameleon", icon: "🦎" },
+  { name: "Amphibian - Frog", icon: "🐸" },
+  { name: "Amphibian - Toad", icon: "🐸" },
+  { name: "Amphibian - Salamander", icon: "🦎" },
+  { name: "Amphibian - Newt", icon: "🦎" },
+  { name: "Fish - Goldfish", icon: "🐠" },
+  { name: "Fish - Betta", icon: "🐠" },
+  { name: "Fish - Guppy", icon: "🐠" },
+  { name: "Fish - Koi", icon: "🐠" },
+  { name: "Farm Animal - Horse", icon: "🐴" },
+  { name: "Farm Animal - Pony", icon: "🐴" },
+  { name: "Farm Animal - Donkey", icon: "🫏" },
+  { name: "Farm Animal - Cow", icon: "🐮" },
+  { name: "Farm Animal - Goat", icon: "🐐" },
+  { name: "Farm Animal - Sheep", icon: "🐑" },
+  { name: "Farm Animal - Pig", icon: "🐷" },
+  { name: "Farm Animal - Chicken", icon: "🐔" },
+  { name: "Farm Animal - Duck", icon: "🦆" },
+  { name: "Farm Animal - Goose", icon: "🦢" },
+  { name: "Farm Animal - Llama", icon: "🦙" },
+  { name: "Farm Animal - Alpaca", icon: "🦙" },
+  { name: "Exotic - Sugar Glider", icon: "🦘" },
+  { name: "Exotic - Wallaby", icon: "🦘" },
+  { name: "Exotic - Kangaroo", icon: "🦘" },
+  { name: "Exotic - Fox", icon: "🦊" },
+  { name: "Exotic - Raccoon", icon: "🦝" },
+  { name: "Exotic - Skunk", icon: "🦨" },
+  { name: "Exotic - Monkey", icon: "🐒" },
+  { name: "Exotic - Sloth", icon: "🦥" },
+  { name: "Exotic - Anteater", icon: "🐜" },
+  { name: "Exotic - Armadillo", icon: "🦉" },
+  { name: "Marine - Dolphin", icon: "🐬" },
+  { name: "Marine - Seal", icon: "🦭" },
+  { name: "Marine - Sea Lion", icon: "🦭" },
+  { name: "Marine - Penguin", icon: "🐧" },
+  { name: "Marine - Sea Turtle", icon: "🐢" },
+  { name: "Other - Please specify", icon: "🐾" }
+]
+
+const FREQUENCY_OPTIONS = [
+  { label: 'One-time', value: 'one-time', days: null },
+  { label: 'Monthly', value: 'monthly', days: 30 },
+  { label: 'Yearly', value: 'yearly', days: 365 },
+  { label: 'Every 2 years', value: 'every-2-years', days: 730 },
+  { label: 'Every 3 years', value: 'every-3-years', days: 1095 },
+  { label: 'Custom', value: 'custom', days: null }
 ]
 
 const uid = () => Math.random().toString(36).slice(2, 9)
 
-export default function CreateAnimalForm() {
+export default function CreateAnimalForm({ onSuccess, editingAnimal }) {
   useEffect(() => {
     fetchOwners()
     if (Platform.OS !== 'web') {
@@ -109,7 +98,6 @@ export default function CreateAnimalForm() {
     }
   }, [])
   
-  // Identity
   const [photo, setPhoto] = useState(null)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [name, setName] = useState("")
@@ -122,7 +110,6 @@ export default function CreateAnimalForm() {
   const [colorText, setColorText] = useState("")
   const [description, setDescription] = useState("")
   
-  // Other species modal
   const [showOtherSpeciesModal, setShowOtherSpeciesModal] = useState(false)
   const [customSpecies, setCustomSpecies] = useState("")
   
@@ -155,32 +142,88 @@ export default function CreateAnimalForm() {
     ]
   }
   
-  // Physical
   const [age, setAge] = useState("")
   const [weight, setWeight] = useState("")
   
-  // Medical
   const [medical_history, setHistory] = useState("")
   const [vaccinations, setVaccinations] = useState([])
   const [showVaccinations, setShowVaccinations] = useState(false)
   const [vaccEditorVisible, setVaccEditorVisible] = useState(false)
-  const [vaccEditorItem, setVaccEditorItem] = useState({ name: '', date: '', nextDue: '' })
+  const [vaccEditorItem, setVaccEditorItem] = useState({ name: '', date: '', nextDue: '', frequency: 'one-time', notes: '' })
+  const [showVaccineDatePicker, setShowVaccineDatePicker] = useState(false)
+  const [showVaccineDuePicker, setShowVaccineDuePicker] = useState(false)
+  const [selectedFrequency, setSelectedFrequency] = useState('one-time')
   const [notes, setnotes] = useState("")
   
-  // Owner
   const [selectedOwnerId, setSelectedOwnerId] = useState(null)
   const [ownerModalVisible, setOwnerModalVisible] = useState(false)
-  const [newOwner, setNewOwner] = useState({ name: '', email: '', phone: '' })
+  const [newOwner, setNewOwner] = useState({ name: '', email: '', phone: '', address: '' })
   
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
 
-  const { createAnimal, owners, fetchOwners, createOwner } = useAnimals()
+  const { createAnimal, updateAnimal, owners, fetchOwners, createOwner } = useAnimals()
   const router = useRouter()
 
   const isSaveEnabled = name.trim() && species && selectedOwnerId
 
-  // Request permissions for camera roll (native only)
+  // Populate form when editing
+  useEffect(() => {
+    if (editingAnimal) {
+      setName(editingAnimal.name || '')
+      setSpecies(editingAnimal.species || '')
+      setBreed(editingAnimal.breed || '')
+      setSex(editingAnimal.sex || 'Unknown')
+      setAge(editingAnimal.age?.toString() || '')
+      setWeight(editingAnimal.weight?.toString() || '')
+      setMicrochip(editingAnimal.microchip || '')
+      setColorText(editingAnimal.color || '')
+      setDescription(editingAnimal.description || '')
+      setHistory(editingAnimal.medical_history || '')
+      setnotes(editingAnimal.notes || '')
+      setSelectedOwnerId(editingAnimal.OwnerId || null)
+      
+      if (editingAnimal.dob) {
+        setDob(new Date(editingAnimal.dob))
+      }
+      
+      // Parse vaccinations if they exist
+      if (editingAnimal.vaccinations && typeof editingAnimal.vaccinations === 'string') {
+        const parsedVaccinations = parseVaccinationsFromString(editingAnimal.vaccinations)
+        setVaccinations(parsedVaccinations)
+      }
+    }
+  }, [editingAnimal])
+
+  const parseVaccinationsFromString = (vaccStr) => {
+    if (!vaccStr) return []
+    
+    const vaccines = vaccStr.split('; ').map(v => {
+      // Parse format: "Vaccine Name (YYYY-MM-DD) - due: YYYY-MM-DD [Frequency] - notes: text"
+      const nameMatch = v.match(/^([^(]+)/)
+      const dateMatch = v.match(/\(([^)]+)\)/)
+      const dueMatch = v.match(/due:\s*([^\s\[]+)/)
+      const freqMatch = v.match(/\[([^\]]+)\]/)
+      const notesMatch = v.match(/notes:\s*(.+)$/)
+      
+      return {
+        id: uid(),
+        name: nameMatch ? nameMatch[0].trim() : '',
+        date: dateMatch ? dateMatch[1] : '',
+        nextDue: dueMatch ? dueMatch[1] : '',
+        frequency: freqMatch ? getFrequencyValue(freqMatch[1]) : 'one-time',
+        notes: notesMatch ? notesMatch[1] : ''
+      }
+    })
+    
+    return vaccines
+  }
+
+  const getFrequencyValue = (label) => {
+    const freq = FREQUENCY_OPTIONS.find(f => f.label === label)
+    return freq ? freq.value : 'one-time'
+  }
+
   const requestMediaPermissions = async () => {
     if (Platform.OS !== 'web') {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -190,13 +233,11 @@ export default function CreateAnimalForm() {
     }
   }
 
-  // Helper to format date
   const formatDate = (date) => {
     if (!date) return ''
     return date.toISOString().split('T')[0]
   }
 
-  // Format date for display (YYYY-MM-DD)
   const formatDateForDisplay = (date) => {
     if (!date) return ''
     const year = date.getFullYear()
@@ -205,7 +246,17 @@ export default function CreateAnimalForm() {
     return `${year}-${month}-${day}`
   }
 
-  // Handle date change (native)
+  const calculateDueDate = (givenDate, frequency) => {
+    if (!givenDate || frequency === 'one-time') return ''
+    
+    const frequencyObj = FREQUENCY_OPTIONS.find(f => f.value === frequency)
+    if (!frequencyObj || !frequencyObj.days) return ''
+    
+    const date = new Date(givenDate)
+    date.setDate(date.getDate() + frequencyObj.days)
+    return formatDateForDisplay(date)
+  }
+
   const onDateChange = (event, selectedDate) => {
     setShowDatePicker(false)
     if (selectedDate) {
@@ -213,21 +264,50 @@ export default function CreateAnimalForm() {
     }
   }
 
-  // Format microchip - only numbers, max 15 digits
+  const onVaccineDateChange = (event, selectedDate) => {
+    setShowVaccineDatePicker(false)
+    if (selectedDate) {
+      const formattedDate = formatDateForDisplay(selectedDate)
+      setVaccEditorItem((s) => ({ ...s, date: formattedDate }))
+      
+      if (selectedFrequency !== 'one-time' && selectedFrequency !== 'custom') {
+        const dueDate = calculateDueDate(formattedDate, selectedFrequency)
+        setVaccEditorItem((s) => ({ ...s, nextDue: dueDate }))
+      }
+    }
+  }
+
+  const onVaccineDueChange = (event, selectedDate) => {
+    setShowVaccineDuePicker(false)
+    if (selectedDate) {
+      setVaccEditorItem((s) => ({ ...s, nextDue: formatDateForDisplay(selectedDate) }))
+    }
+  }
+
+  const handleFrequencyChange = (frequency) => {
+    setSelectedFrequency(frequency)
+    setVaccEditorItem((s) => ({ ...s, frequency }))
+    
+    if (vaccEditorItem.date && frequency !== 'one-time' && frequency !== 'custom') {
+      const dueDate = calculateDueDate(vaccEditorItem.date, frequency)
+      setVaccEditorItem((s) => ({ ...s, nextDue: dueDate }))
+    } else if (frequency === 'one-time') {
+      setVaccEditorItem((s) => ({ ...s, nextDue: '' }))
+    }
+  }
+
   const handleMicrochipChange = (text) => {
     const numbersOnly = text.replace(/[^0-9]/g, '')
     const truncated = numbersOnly.slice(0, 15)
     setMicrochip(truncated)
   }
 
-  // Format age - only numbers, max 3 digits
   const handleAgeChange = (text) => {
     const numbersOnly = text.replace(/[^0-9]/g, '')
     const truncated = numbersOnly.slice(0, 3)
     setAge(truncated)
   }
 
-  // Format weight - only numbers with optional decimal, max 2 decimal places
   const handleWeightChange = (text) => {
     let formatted = text.replace(/[^0-9.]/g, '')
     const parts = formatted.split('.')
@@ -240,7 +320,6 @@ export default function CreateAnimalForm() {
     setWeight(formatted)
   }
 
-  // Photo picker function
   const pickImage = async () => {
     if (Platform.OS === 'web') {
       const input = document.createElement('input')
@@ -282,7 +361,6 @@ export default function CreateAnimalForm() {
     }
   }
 
-  // Take photo with camera (native only)
   const takePhoto = async () => {
     if (Platform.OS === 'web') {
       Alert.alert('Not Available', 'Camera is not available on web. Please upload a photo instead.')
@@ -315,7 +393,6 @@ export default function CreateAnimalForm() {
     }
   }
 
-  // Show photo options
   const showPhotoOptions = () => {
     if (Platform.OS === 'web') {
       pickImage()
@@ -334,7 +411,6 @@ export default function CreateAnimalForm() {
     )
   }
 
-  // Owner functions
   const addOwnerInline = async () => {
     if (!newOwner.name || !newOwner.email || !newOwner.phone) {
       Alert.alert('Missing info', 'Please fill name, email and phone.')
@@ -344,13 +420,13 @@ export default function CreateAnimalForm() {
     const owner = await createOwner(newOwner)
 
     setSelectedOwnerId(owner.$id)
-    setNewOwner({ name: '', email: '', phone: '' })
+    setNewOwner({ name: '', email: '', phone: '', address: '' })
     setOwnerModalVisible(false)
   }
 
-  // Vaccination functions
   const openVaccEditor = () => {
-    setVaccEditorItem({ name: '', date: '', nextDue: '' })
+    setVaccEditorItem({ name: '', date: '', nextDue: '', frequency: 'one-time', notes: '' })
+    setSelectedFrequency('one-time')
     setVaccEditorVisible(true)
   }
   
@@ -359,17 +435,36 @@ export default function CreateAnimalForm() {
       Alert.alert('Validation', 'Vaccine name is required.')
       return
     }
-    setVaccinations((s) => [{ id: uid(), ...vaccEditorItem }, ...s])
+    if (!vaccEditorItem.date) {
+      Alert.alert('Validation', 'Date given is required.')
+      return
+    }
+    
+    setVaccinations((s) => [{ 
+      id: uid(), 
+      name: vaccEditorItem.name,
+      date: vaccEditorItem.date,
+      nextDue: vaccEditorItem.nextDue,
+      frequency: vaccEditorItem.frequency,
+      notes: vaccEditorItem.notes
+    }, ...s])
     setVaccEditorVisible(false)
     setShowVaccinations(true)
   }
 
-  // Format vaccinations for backend
   const formatVaccinationsForBackend = () => {
-    return vaccinations.map(v => `${v.name}${v.date ? ` (${v.date})` : ''}${v.nextDue ? ` - due: ${v.nextDue}` : ''}`).join('; ')
+    return vaccinations.map(v => {
+      let vaccineStr = v.name + ' (' + v.date + ')'
+      if (v.nextDue) vaccineStr += ' - due: ' + v.nextDue
+      if (v.frequency && v.frequency !== 'one-time') {
+        const frequencyLabel = FREQUENCY_OPTIONS.find(f => f.value === v.frequency)?.label
+        if (frequencyLabel) vaccineStr += ' [' + frequencyLabel + ']'
+      }
+      if (v.notes) vaccineStr += ' - notes: ' + v.notes
+      return vaccineStr
+    }).join('; ')
   }
 
-  // Handle species selection
   const handleSpeciesSelect = (selectedSpecies) => {
     if (selectedSpecies === 'Other') {
       setShowOtherSpeciesModal(true)
@@ -381,43 +476,12 @@ export default function CreateAnimalForm() {
   }
 
   const handleOtherSpeciesSelect = (selectedOtherSpecies) => {
-    setSpecies(selectedOtherSpecies)
+    setSpecies(selectedOtherSpecies.name)
     setBreed("")
     setShowOtherSpeciesModal(false)
   }
 
-  async function handleSubmit() {
-    const e = {}
-    if (!name.trim()) e.name = 'Pet name is required'
-    if (!species) e.species = 'Species is required'
-    if (!selectedOwnerId) e.owner = 'Owner is required'
-    setErrors(e)
-    
-    if (Object.keys(e).length > 0) {
-      Alert.alert('Validation', 'Please fill required fields.')
-      return
-    }
-
-    setLoading(true)
-
-    await createAnimal({
-      name,
-      description,
-      species,
-      breed,
-      medical_history,
-      vaccinations: formatVaccinationsForBackend(),
-      notes,
-      sex: sex.toLowerCase(),
-      age: parseInt(age, 10) || 0,
-      weight: parseFloat(weight) || 0,
-      microchip,
-      color: colorText,
-      dob: dob ? formatDate(dob) : '',
-      OwnerId: selectedOwnerId,
-    })
-
-    // Reset form
+  const resetForm = () => {
     setSpecies("")
     setName("")
     setDescription("")
@@ -434,8 +498,55 @@ export default function CreateAnimalForm() {
     setSelectedOwnerId(null)
     setPhoto(null)
     setCustomSpecies("")
+  }
 
-    router.replace("/animals")
+  async function handleSubmit() {
+    const e = {}
+    if (!name.trim()) e.name = 'Pet name is required'
+    if (!species) e.species = 'Species is required'
+    if (!selectedOwnerId) e.owner = 'Owner is required'
+    setErrors(e)
+    
+    if (Object.keys(e).length > 0) {
+      Alert.alert('Validation', 'Please fill required fields.')
+      return
+    }
+
+    setLoading(true)
+
+    const animalData = {
+      name,
+      description,
+      species,
+      breed,
+      medical_history,
+      vaccinations: formatVaccinationsForBackend(),
+      notes,
+      sex: sex.toLowerCase(),
+      age: parseInt(age, 10) || 0,
+      weight: parseFloat(weight) || 0,
+      microchip,
+      color: colorText,
+      dob: dob ? formatDate(dob) : '',
+      OwnerId: selectedOwnerId,
+    }
+
+    if (editingAnimal) {
+      // Update existing animal
+      await updateAnimal(editingAnimal.$id, animalData)
+    } else {
+      // Create new animal
+      await createAnimal(animalData)
+    }
+
+    resetForm()
+
+    if (onSuccess) {
+      onSuccess()
+    } else {
+      router.replace("/animals")
+    }
+    
     setLoading(false)
   }
 
@@ -450,20 +561,15 @@ export default function CreateAnimalForm() {
           nestedScrollEnabled={true}
         >
           
-          {/* Page Title */}
-          <Text style={globalStyles.pageTitle}>Create Animal</Text>
+          <Text style={globalStyles.pageTitle}>{editingAnimal ? 'Edit Animal' : 'Create Animal'}</Text>
           <Text style={globalStyles.subtitle}>Enter the animal identity details. Required fields: Pet name, Species, Owner.</Text>
 
-          {/* Two Column Layout */}
           <View style={styles.twoColumnLayout}>
             
-            {/* LEFT COLUMN (70%) */}
             <View style={styles.leftColumn}>
               
-              {/* Identity Card */}
               <View style={globalStyles.card}>
                 <View style={globalStyles.row}>
-                  {/* Photo Upload */}
                   <TouchableOpacity 
                     style={globalStyles.photoUpload} 
                     onPress={showPhotoOptions}
@@ -497,7 +603,6 @@ export default function CreateAnimalForm() {
                   <View style={{ flex: 1, marginRight: 8 }}>
                     <Text style={globalStyles.label}>Species *</Text>
                     
-                    {/* Species Buttons with Icons */}
                     <View style={styles.speciesButtonGroup}>
                       <TouchableOpacity
                         style={[
@@ -548,7 +653,6 @@ export default function CreateAnimalForm() {
                       </TouchableOpacity>
                     </View>
                     
-                    {/* Show selected custom species */}
                     {species && !SPECIES_OPTIONS.includes(species) && (
                       <View style={styles.customSpeciesBadge}>
                         <MaterialCommunityIcons name="paw" size={16} color={COLORS.primary} />
@@ -635,7 +739,6 @@ export default function CreateAnimalForm() {
                   <View style={{ flex: 1, marginRight: 8 }}>
                     <Text style={globalStyles.label}>Date of birth</Text>
                     
-                    {/* Platform-specific date picker */}
                     {Platform.OS === 'web' ? (
                       <input
                         type="date"
@@ -723,7 +826,6 @@ export default function CreateAnimalForm() {
                 </View>
               </View>
 
-              {/* Medical Card */}
               <View style={globalStyles.card}>
                 <View style={globalStyles.sectionHeaderRow}>
                   <Text style={globalStyles.sectionTitle}>Medical</Text>
@@ -739,7 +841,6 @@ export default function CreateAnimalForm() {
                 />
               </View>
 
-              {/* Vaccinations Card */}
               <View style={globalStyles.card}>
                 <View style={globalStyles.sectionHeaderRow}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -760,17 +861,25 @@ export default function CreateAnimalForm() {
                   <View style={{ marginTop: 12 }}>
                     {vaccinations.length === 0 ? 
                       <Text style={globalStyles.mutedText}>No vaccinations added.</Text> : 
-                      vaccinations.map((v) => (
-                        <View key={v.id} style={globalStyles.listItem}>
-                          <View style={{ flex: 1 }}>
-                            <Text style={{ fontWeight: '600' }}>💉 {v.name}</Text>
-                            <Text style={globalStyles.mutedText}>{v.date}{v.nextDue ? ` • next: ${v.nextDue}` : ''}</Text>
+                      vaccinations.map((v) => {
+                        const frequencyLabel = FREQUENCY_OPTIONS.find(f => f.value === v.frequency)?.label
+                        return (
+                          <View key={v.id} style={globalStyles.listItem}>
+                            <View style={{ flex: 1 }}>
+                              <Text style={{ fontWeight: '600' }}>💉 {v.name}</Text>
+                              <Text style={globalStyles.mutedText}>
+                                Given: {v.date}
+                                {v.nextDue && ` • Due: ${v.nextDue}`}
+                                {frequencyLabel && frequencyLabel !== 'One-time' && ` • ${frequencyLabel}`}
+                              </Text>
+                              {v.notes ? <Text style={globalStyles.mutedText}>📝 {v.notes}</Text> : null}
+                            </View>
+                            <TouchableOpacity onPress={() => setVaccinations((s) => s.filter((i) => i.id !== v.id))}>
+                              <Text style={{ color: COLORS.danger }}>Delete</Text>
+                            </TouchableOpacity>
                           </View>
-                          <TouchableOpacity onPress={() => setVaccinations((s) => s.filter((i) => i.id !== v.id))}>
-                            <Text style={{ color: COLORS.danger }}>Delete</Text>
-                          </TouchableOpacity>
-                        </View>
-                      ))
+                        )
+                      })
                     }
                   </View>
                 ) : (
@@ -778,7 +887,6 @@ export default function CreateAnimalForm() {
                 )}
               </View>
 
-              {/* Notes Card */}
               <View style={globalStyles.card}>
                 <View style={globalStyles.sectionHeaderRow}>
                   <Text style={globalStyles.sectionTitle}>Notes</Text>
@@ -795,7 +903,6 @@ export default function CreateAnimalForm() {
               </View>
             </View>
 
-            {/* RIGHT COLUMN (30%) - Owner Section */}
             <View style={styles.rightColumn}>
               <View style={globalStyles.card}>
                 <View style={globalStyles.sectionHeaderRow}>
@@ -803,7 +910,6 @@ export default function CreateAnimalForm() {
                   <Feather name="users" size={18} color={COLORS.primary} />
                 </View>
                 
-                {/* Owner Chips - Horizontal scroll */}
                 <FlatList
                   data={owners}
                   keyExtractor={(o) => o.$id}
@@ -837,7 +943,6 @@ export default function CreateAnimalForm() {
                 
                 {errors.owner ? <Text style={globalStyles.errorText}>{errors.owner}</Text> : null}
 
-                {/* Selected Owner Details Placeholder */}
                 {selectedOwnerId && (
                   <View style={{ marginTop: 16, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#F0F0F0' }}>
                     <Text style={[globalStyles.mutedText, { fontSize: 11 }]}>Selected owner ID: {selectedOwnerId}</Text>
@@ -845,7 +950,6 @@ export default function CreateAnimalForm() {
                 )}
               </View>
 
-              {/* Vet Tip Card */}
               <View style={[globalStyles.card, { backgroundColor: COLORS.card, marginTop: 0 }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   <Text style={{ fontSize: 20 }}>💡</Text>
@@ -860,11 +964,9 @@ export default function CreateAnimalForm() {
             </View>
           </View>
 
-          {/* Bottom spacer for scroll */}
           <View style={{ height: 20 }} />
         </ScrollView>
 
-        {/* Other Species Modal */}
         <Modal
           visible={showOtherSpeciesModal}
           transparent={true}
@@ -893,14 +995,15 @@ export default function CreateAnimalForm() {
               <ScrollView style={styles.modalList}>
                 {OTHER_SPECIES_OPTIONS.filter(item => 
                   customSpecies === "" || 
-                  item.toLowerCase().includes(customSpecies.toLowerCase())
+                  item.name.toLowerCase().includes(customSpecies.toLowerCase())
                 ).map((item) => (
                   <TouchableOpacity
-                    key={item}
+                    key={item.name}
                     style={styles.modalItem}
                     onPress={() => handleOtherSpeciesSelect(item)}
                   >
-                    <Text style={styles.modalItemText}>{item}</Text>
+                    <Text style={styles.modalItemIcon}>{item.icon}</Text>
+                    <Text style={styles.modalItemText}>{item.name}</Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
@@ -917,35 +1020,157 @@ export default function CreateAnimalForm() {
           </View>
         </Modal>
 
-        {/* Vaccination Editor Modal */}
         <Modal visible={vaccEditorVisible} transparent animationType="slide" onRequestClose={() => setVaccEditorVisible(false)}>
           <View style={globalStyles.modalOverlay}>
             <View style={globalStyles.modalCard}>
               <Text style={globalStyles.sectionTitle}>Add Vaccination</Text>
+              
               <Text style={globalStyles.label}>Vaccine name *</Text>
               <TextInput 
                 value={vaccEditorItem.name} 
                 onChangeText={(t) => setVaccEditorItem((s) => ({ ...s, name: t }))} 
                 style={globalStyles.input} 
+                placeholder="e.g., Rabies, DHPP, Bordetella"
               />
-              <Text style={[globalStyles.label, { marginTop: 12 }]}>Date</Text>
+              
+              <Text style={[globalStyles.label, { marginTop: 12 }]}>Date given *</Text>
+              {Platform.OS === 'web' ? (
+                <input
+                  type="date"
+                  value={vaccEditorItem.date}
+                  onChange={(e) => {
+                    const dateValue = e.target.value
+                    setVaccEditorItem((s) => ({ ...s, date: dateValue }))
+                    if (selectedFrequency !== 'one-time' && selectedFrequency !== 'custom' && dateValue) {
+                      const dueDate = calculateDueDate(dateValue, selectedFrequency)
+                      setVaccEditorItem((s) => ({ ...s, nextDue: dueDate }))
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid #F0F0F0',
+                    backgroundColor: '#FAFAFA',
+                    fontSize: '14px',
+                    fontFamily: 'system-ui',
+                    color: vaccEditorItem.date ? COLORS.text : '#999',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    marginTop: 4,
+                  }}
+                />
+              ) : (
+                <>
+                  <TouchableOpacity 
+                    style={globalStyles.dateButton}
+                    onPress={() => setShowVaccineDatePicker(true)}
+                    activeOpacity={0.7}
+                  >
+                    <Feather name="calendar" size={16} color={COLORS.muted} style={{ marginRight: 8 }} />
+                    <Text style={vaccEditorItem.date ? globalStyles.dateButtonText : globalStyles.dateButtonPlaceholder}>
+                      {vaccEditorItem.date || "Select date"}
+                    </Text>
+                  </TouchableOpacity>
+                  {showVaccineDatePicker && DateTimePicker && (
+                    <DateTimePicker
+                      value={vaccEditorItem.date ? new Date(vaccEditorItem.date) : new Date()}
+                      mode="date"
+                      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                      onChange={onVaccineDateChange}
+                      maximumDate={new Date()}
+                    />
+                  )}
+                </>
+              )}
+              
+              <Text style={[globalStyles.label, { marginTop: 12 }]}>Frequency</Text>
+              <View style={styles.frequencyGroup}>
+                {FREQUENCY_OPTIONS.map((freq) => (
+                  <TouchableOpacity
+                    key={freq.value}
+                    style={[
+                      styles.frequencyButton,
+                      selectedFrequency === freq.value && styles.frequencyButtonActive
+                    ]}
+                    onPress={() => handleFrequencyChange(freq.value)}
+                  >
+                    <Text style={[
+                      styles.frequencyButtonText,
+                      selectedFrequency === freq.value && styles.frequencyButtonTextActive
+                    ]}>
+                      {freq.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              
+              {selectedFrequency !== 'one-time' && selectedFrequency !== 'custom' && vaccEditorItem.date && vaccEditorItem.nextDue && (
+                <View style={styles.calculatedDueDate}>
+                  <MaterialCommunityIcons name="calendar-clock" size={16} color={COLORS.primary} />
+                  <Text style={styles.calculatedDueDateText}>
+                    Next due date: {vaccEditorItem.nextDue}
+                  </Text>
+                </View>
+              )}
+              
+              <Text style={[globalStyles.label, { marginTop: 12 }]}>
+                Due date {selectedFrequency === 'custom' ? '*' : '(optional override)'}
+              </Text>
+              {Platform.OS === 'web' ? (
+                <input
+                  type="date"
+                  value={vaccEditorItem.nextDue}
+                  onChange={(e) => setVaccEditorItem((s) => ({ ...s, nextDue: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid #F0F0F0',
+                    backgroundColor: '#FAFAFA',
+                    fontSize: '14px',
+                    fontFamily: 'system-ui',
+                    color: vaccEditorItem.nextDue ? COLORS.text : '#999',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    marginTop: 4,
+                  }}
+                />
+              ) : (
+                <>
+                  <TouchableOpacity 
+                    style={globalStyles.dateButton}
+                    onPress={() => setShowVaccineDuePicker(true)}
+                    activeOpacity={0.7}
+                  >
+                    <Feather name="calendar" size={16} color={COLORS.muted} style={{ marginRight: 8 }} />
+                    <Text style={vaccEditorItem.nextDue ? globalStyles.dateButtonText : globalStyles.dateButtonPlaceholder}>
+                      {vaccEditorItem.nextDue || "Select due date"}
+                    </Text>
+                  </TouchableOpacity>
+                  {showVaccineDuePicker && DateTimePicker && (
+                    <DateTimePicker
+                      value={vaccEditorItem.nextDue ? new Date(vaccEditorItem.nextDue) : (vaccEditorItem.date ? new Date(vaccEditorItem.date) : new Date())}
+                      mode="date"
+                      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                      onChange={onVaccineDueChange}
+                    />
+                  )}
+                </>
+              )}
+              
+              <Text style={[globalStyles.label, { marginTop: 12 }]}>Notes (optional)</Text>
               <TextInput 
-                value={vaccEditorItem.date} 
-                onChangeText={(t) => setVaccEditorItem((s) => ({ ...s, date: t }))} 
-                placeholder="YYYY-MM-DD" 
-                style={globalStyles.input} 
-              />
-              <Text style={[globalStyles.label, { marginTop: 12 }]}>Next due (optional)</Text>
-              <TextInput 
-                value={vaccEditorItem.nextDue} 
-                onChangeText={(t) => setVaccEditorItem((s) => ({ ...s, nextDue: t }))} 
-                placeholder="YYYY-MM-DD" 
-                style={globalStyles.input} 
+                value={vaccEditorItem.notes} 
+                onChangeText={(t) => setVaccEditorItem((s) => ({ ...s, notes: t }))} 
+                placeholder="Lot number, administration site, reactions, etc." 
+                style={[globalStyles.input, { minHeight: 60 }]} 
+                multiline
               />
 
               <View style={{ flexDirection: 'row', marginTop: 16, gap: 12 }}>
                 <TouchableOpacity style={[globalStyles.primaryButton, { flex: 1 }]} onPress={saveVaccination}>
-                  <Text style={globalStyles.primaryButtonText}>Save</Text>
+                  <Text style={globalStyles.primaryButtonText}>Save Vaccination</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[globalStyles.secondaryButton, { flex: 1 }]} onPress={() => setVaccEditorVisible(false)}>
                   <Text style={{ color: COLORS.primary }}>Cancel</Text>
@@ -955,7 +1180,6 @@ export default function CreateAnimalForm() {
           </View>
         </Modal>
 
-        {/* Owner Modal */}
         <Modal visible={ownerModalVisible} transparent animationType="slide" onRequestClose={() => setOwnerModalVisible(false)}>
           <View style={globalStyles.modalOverlay}>
             <View style={globalStyles.modalCard}>
@@ -980,6 +1204,16 @@ export default function CreateAnimalForm() {
                 style={globalStyles.input} 
                 keyboardType="phone-pad" 
               />
+              <Text style={[globalStyles.label, { marginTop: 12 }]}>Address (optional)</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Feather name="map-pin" size={18} color={COLORS.muted} />
+                <TextInput 
+                  value={newOwner.address} 
+                  onChangeText={(t) => setNewOwner((s) => ({ ...s, address: t }))} 
+                  placeholder="Street address, city, postal code..." 
+                  style={[globalStyles.input, { flex: 1 }]} 
+                />
+              </View>
 
               <View style={{ flexDirection: 'row', marginTop: 16, gap: 12 }}>
                 <TouchableOpacity style={[globalStyles.primaryButton, { flex: 1 }]} onPress={addOwnerInline}>
@@ -993,7 +1227,6 @@ export default function CreateAnimalForm() {
           </View>
         </Modal>
 
-        {/* Sticky Bottom Bar */}
         <View style={globalStyles.stickyBar}>
           <TouchableOpacity 
             style={[globalStyles.primaryButton, { width: '100%', opacity: !isSaveEnabled || loading ? 0.5 : 1 }]} 
@@ -1001,7 +1234,7 @@ export default function CreateAnimalForm() {
             onPress={handleSubmit}
           >
             <Text style={globalStyles.primaryButtonText}>
-              {loading ? "Saving..." : "Save"}
+              {loading ? "Saving..." : (editingAnimal ? "Update Animal" : "Save Animal")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -1023,7 +1256,6 @@ const styles = StyleSheet.create({
     flex: 3,
     gap: 14,
   },
-  // Species buttons
   speciesButtonGroup: {
     flexDirection: 'row',
     gap: 12,
@@ -1073,7 +1305,6 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontWeight: '500',
   },
-  // Breed chips
   breedScroll: {
     flexDirection: 'row',
   },
@@ -1098,7 +1329,46 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontWeight: '500',
   },
-  // Modal styles
+  frequencyGroup: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 4,
+  },
+  frequencyButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#FAFAFA',
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+  },
+  frequencyButtonActive: {
+    backgroundColor: COLORS.cardSelected,
+    borderColor: COLORS.primary,
+  },
+  frequencyButtonText: {
+    fontSize: 12,
+    color: COLORS.text,
+  },
+  frequencyButtonTextActive: {
+    color: COLORS.primary,
+    fontWeight: '500',
+  },
+  calculatedDueDate: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 8,
+    padding: 8,
+    backgroundColor: COLORS.cardSelected,
+    borderRadius: 6,
+  },
+  calculatedDueDateText: {
+    fontSize: 13,
+    color: COLORS.primaryDark,
+    fontWeight: '500',
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -1152,14 +1422,21 @@ const styles = StyleSheet.create({
     maxHeight: 400,
   },
   modalItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F0F0',
   },
+  modalItemIcon: {
+    fontSize: 20,
+    marginRight: 12,
+  },
   modalItemText: {
     fontSize: 14,
     color: COLORS.text,
+    flex: 1,
   },
   modalFooter: {
     padding: 12,

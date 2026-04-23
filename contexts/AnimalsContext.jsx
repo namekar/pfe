@@ -20,7 +20,6 @@ export function AnimalsProvider({ children }){
                 DATABASE_ID,
                 COLLECTION_ID,
                 [
-                    
                     Query.equal('VetId',user.$id)
                 ]
             )
@@ -43,6 +42,7 @@ export function AnimalsProvider({ children }){
             console.error(error.message)
         }
     }
+
     async function fetchOwners(){
         try {
             const res = await databases.listDocuments(
@@ -56,6 +56,7 @@ export function AnimalsProvider({ children }){
             console.log(error.message)
         }
     }
+
     async function createOwner(data){
         try {
             if (!user) throw new Error("User not ready")
@@ -68,6 +69,7 @@ export function AnimalsProvider({ children }){
                     name: data.name,
                     email: data.email,
                     phone: data.phone,
+                    address: data.address || "", // Add address field
                     vetId: user.$id
                 }
             )
@@ -81,15 +83,17 @@ export function AnimalsProvider({ children }){
             return null
         }
     }
+
     async function createAnimal(data){
         try{
             const newAnimal = await databases.createDocument(
                 DATABASE_ID,
                 COLLECTION_ID,
                 ID.unique(),
-                {...data,
+                {
+                    ...data,
                     OwnerId: data.OwnerId,
-                    VetId:  user.$id
+                    VetId: user.$id
                 },
                 [
                     Permission.read(Role.user(user.$id)),
@@ -98,12 +102,41 @@ export function AnimalsProvider({ children }){
                 ]
             )
             
+            // Refresh animals list after creation
+            await fetchAnimals()
             return newAnimal
             
         }catch (error){
             console.error(error.message)
         }
     }
+
+    async function updateAnimal(id, data){
+        try{
+            const updatedAnimal = await databases.updateDocument(
+                DATABASE_ID,
+                COLLECTION_ID,
+                id,
+                {
+                    ...data,
+                    OwnerId: data.OwnerId,
+                    VetId: user.$id
+                }
+            )
+            
+            // Update local state
+            setAnimals(prev => prev.map(animal => 
+                animal.$id === id ? updatedAnimal : animal
+            ))
+            
+            return updatedAnimal
+            
+        }catch (error){
+            console.error("UPDATE ANIMAL ERROR:", error.message)
+            throw error
+        }
+    }
+
     async function DeleteAnimal(id){
         try{
             await databases.deleteDocument(
@@ -116,40 +149,61 @@ export function AnimalsProvider({ children }){
             console.error(error.message) 
         }
     }
+
     useEffect(() => {
-    let unsubscribe
-    const channel = `databases.${DATABASE_ID}.collections.${COLLECTION_ID}.documents`
+        let unsubscribe
+        const channel = `databases.${DATABASE_ID}.collections.${COLLECTION_ID}.documents`
 
-    if (user) {
-      fetchAnimals()
+        if (user) {
+            fetchAnimals()
+            fetchOwners() // Also fetch owners when user loads
 
-      unsubscribe = client.subscribe(channel, (response) => {
-        const { payload, events } = response
-        console.log("event",events)
-        console.log("this is the payload",payload)
+            unsubscribe = client.subscribe(channel, (response) => {
+                const { payload, events } = response
+                console.log("event", events)
+                console.log("this is the payload", payload)
 
-        if (events[0].includes("create")) {
-          setAnimals((prevAnimals) => [...prevAnimals, payload])
+                if (events[0].includes("create")) {
+                    setAnimals((prevAnimals) => [...prevAnimals, payload])
+                }
+
+                if (events[0].includes("update")) {
+                    setAnimals((prevAnimals) => 
+                        prevAnimals.map((animal) => 
+                            animal.$id === payload.$id ? payload : animal
+                        )
+                    )
+                }
+
+                if (events[0].includes("delete")) {
+                    setAnimals((prevAnimals) => prevAnimals.filter((animal) => animal.$id !== payload.$id))
+                }
+            })
+
+        } else {
+            setAnimals([])
+            setOwners([])
         }
 
-        if (events[0].includes("delete")) {
-          setAnimals((prevAnimals) => prevAnimals.filter((animal) => animal.$id !== payload.$id))
+        return () => {
+            if (unsubscribe) unsubscribe()
         }
-      })
 
-    } else {
-      setAnimals([])
-    }
-
-    return () => {
-      if (unsubscribe) unsubscribe()
-    }
-
-  }, [user])
+    }, [user])
     
     return (
         <AnimalsContext.Provider 
-            value={{animals, fetchAnimals, fetchAnimalById, createAnimal, DeleteAnimal, owners, fetchOwners,createOwner}}
+            value={{
+                animals, 
+                fetchAnimals, 
+                fetchAnimalById, 
+                createAnimal, 
+                updateAnimal,  // Add this
+                DeleteAnimal, 
+                owners, 
+                fetchOwners,
+                createOwner
+            }}
         >
             {children}
         </AnimalsContext.Provider>
