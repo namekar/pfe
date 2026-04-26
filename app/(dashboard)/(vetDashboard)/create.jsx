@@ -90,6 +90,25 @@ const FREQUENCY_OPTIONS = [
 
 const uid = () => Math.random().toString(36).slice(2, 9)
 
+// Helper function to calculate age from date of birth
+const calculateAgeFromDOB = (dobDate) => {
+  if (!dobDate) return '';
+  
+  const today = new Date();
+  const birthDate = new Date(dobDate);
+  
+  if (isNaN(birthDate.getTime())) return '';
+  
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  
+  return age.toString();
+};
+
 export default function CreateAnimalForm({ onSuccess, editingAnimal }) {
   useEffect(() => {
     fetchOwners()
@@ -187,7 +206,6 @@ export default function CreateAnimalForm({ onSuccess, editingAnimal }) {
         setDob(new Date(editingAnimal.dob))
       }
       
-      // Parse vaccinations if they exist
       if (editingAnimal.vaccinations && typeof editingAnimal.vaccinations === 'string') {
         const parsedVaccinations = parseVaccinationsFromString(editingAnimal.vaccinations)
         setVaccinations(parsedVaccinations)
@@ -195,11 +213,22 @@ export default function CreateAnimalForm({ onSuccess, editingAnimal }) {
     }
   }, [editingAnimal])
 
+  // Calculate age when DOB changes
+  useEffect(() => {
+    if (dob) {
+      const calculatedAge = calculateAgeFromDOB(dob);
+      if (calculatedAge) {
+        setAge(calculatedAge);
+      }
+    } else if (!editingAnimal) {
+      setAge('');
+    }
+  }, [dob]);
+
   const parseVaccinationsFromString = (vaccStr) => {
     if (!vaccStr) return []
     
     const vaccines = vaccStr.split('; ').map(v => {
-      // Parse format: "Vaccine Name (YYYY-MM-DD) - due: YYYY-MM-DD [Frequency] - notes: text"
       const nameMatch = v.match(/^([^(]+)/)
       const dateMatch = v.match(/\(([^)]+)\)/)
       const dueMatch = v.match(/due:\s*([^\s\[]+)/)
@@ -532,10 +561,8 @@ export default function CreateAnimalForm({ onSuccess, editingAnimal }) {
     }
 
     if (editingAnimal) {
-      // Update existing animal
       await updateAnimal(editingAnimal.$id, animalData)
     } else {
-      // Create new animal
       await createAnimal(animalData)
     }
 
@@ -807,11 +834,16 @@ export default function CreateAnimalForm({ onSuccess, editingAnimal }) {
                     <TextInput 
                       value={age} 
                       onChangeText={handleAgeChange} 
-                      placeholder="Age" 
+                      placeholder="Age (auto-calculated from DOB)" 
                       style={globalStyles.input} 
                       keyboardType="numeric"
                       maxLength={3}
                     />
+                    {dob && (
+                      <Text style={{ fontSize: 11, color: '#6B887A', marginTop: 4 }}>
+                        ⚡ Auto-calculated from date of birth
+                      </Text>
+                    )}
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={globalStyles.label}>Weight (lbs)</Text>
@@ -956,7 +988,7 @@ export default function CreateAnimalForm({ onSuccess, editingAnimal }) {
                   <View style={{ flex: 1 }}>
                     <Text style={[globalStyles.sectionTitle, { fontSize: 13 }]}>VET TIP</Text>
                     <Text style={[globalStyles.mutedText, { fontSize: 11, marginTop: 2 }]}>
-                      Completing the Microchip ID and DOB ensures accurate reminders for automated vaccination cycles.
+                      Age is automatically calculated when you enter the Date of Birth. You can also manually adjust it if needed.
                     </Text>
                   </View>
                 </View>

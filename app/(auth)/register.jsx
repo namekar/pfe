@@ -25,62 +25,65 @@ const Register = () => {
   const { register } = useUser()
   const handleSubmit = async () => {
     try {
-      await register(email, password, "Vet", name)
+      // Force role to be 'vet' - no owner option
+      await register(email, password, "vet", name)
     } catch (error) {
       console.log(error.message)
     }
   }
 
   return (
-    <View
-      style={{ flex: 1, backgroundColor: COLORS.background }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.logo}>VetPaws</Text>
-        <Text style={styles.hero}>
-          Welcome to the future of <Text style={{ color: COLORS.primary }}>pet care.</Text>
-        </Text>
-        <Text style={styles.subtitle}>
-          Create your veterinarian account to access clinical tools, patient records and practice settings.
-        </Text>
+    <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+      <ScrollView 
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.centerWrapper}>
+          <Text style={styles.logo}>VetPaws</Text>
+          <Text style={styles.hero}>
+            Welcome to the future of <Text style={{ color: COLORS.primary }}>pet care.</Text>
+          </Text>
+          <Text style={styles.subtitle}>
+            Create your veterinarian account to access clinical tools, patient records and practice settings.
+          </Text>
 
-        <ThemedView style={styles.card}>
-          <Text style={styles.label}>Full name</Text>
-          <ThemedTextInput
-            style={styles.input}
-            placeholder="Dr. Alex Smith"
-            value={name}
-            onChangeText={setName}
-          />
+          <ThemedView style={styles.card}>
+            <Text style={styles.label}>Full name</Text>
+            <ThemedTextInput
+              style={styles.input}
+              placeholder="Dr. Alex Smith"
+              value={name}
+              onChangeText={setName}
+            />
 
-          <Text style={styles.label}>Email</Text>
-          <ThemedTextInput
-            style={styles.input}
-            placeholder="you@clinic.com"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
+            <Text style={styles.label}>Email</Text>
+            <ThemedTextInput
+              style={styles.input}
+              placeholder="you@clinic.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
 
-          <Text style={styles.label}>Password</Text>
-          <ThemedTextInput
-            style={styles.input}
-            placeholder="Enter password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+            <Text style={styles.label}>Password</Text>
+            <ThemedTextInput
+              style={styles.input}
+              placeholder="Enter password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
 
-          <ThemedButton style={styles.cta} onPress={handleSubmit}>
-            <Text style={styles.ctaText}>Register</Text>
-          </ThemedButton>
+            <ThemedButton style={styles.cta} onPress={handleSubmit}>
+              <Text style={styles.ctaText}>Register as Veterinarian</Text>
+            </ThemedButton>
 
-          <Link href="/login" replace>
-            <Text style={styles.backText}>Login instead</Text>
-          </Link>
-        </ThemedView>
+            <Link href="/login" replace>
+              <Text style={styles.backText}>Already have an account? Login</Text>
+            </Link>
+          </ThemedView>
+        </View>
       </ScrollView>
     </View>
   )
@@ -90,10 +93,16 @@ export default Register
 
 const styles = StyleSheet.create({
   container: {
+    flexGrow: 1,
     alignItems: 'center',
-    paddingTop: 40,
-    paddingBottom: 80,
-    paddingHorizontal: 24
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 40,
+  },
+  centerWrapper: {
+    width: '100%',
+    maxWidth: 920,
+    alignItems: 'center',
   },
   logo: {
     fontSize: 18,
@@ -112,11 +121,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: COLORS.muted,
     marginBottom: 20,
-    maxWidth: 920
   },
   card: {
     width: '100%',
-    maxWidth: 920,
     borderRadius: 18,
     backgroundColor: COLORS.card,
     padding: 24,

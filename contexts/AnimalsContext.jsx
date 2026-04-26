@@ -111,31 +111,30 @@ export function AnimalsProvider({ children }){
         }
     }
 
-    async function updateAnimal(id, data){
-        try{
+    async function updateAnimal(id, data) {
+        try {
             const updatedAnimal = await databases.updateDocument(
-                DATABASE_ID,
-                COLLECTION_ID,
-                id,
-                {
-                    ...data,
-                    OwnerId: data.OwnerId,
-                    VetId: user.$id
-                }
+            DATABASE_ID,
+            COLLECTION_ID,
+            id,
+            {
+                ...data,
+                OwnerId: data.OwnerId,
+                VetId: user.$id
+            }
             )
             
             // Update local state
             setAnimals(prev => prev.map(animal => 
-                animal.$id === id ? updatedAnimal : animal
+            animal.$id === id ? updatedAnimal : animal
             ))
             
             return updatedAnimal
-            
-        }catch (error){
+        } catch (error) {
             console.error("UPDATE ANIMAL ERROR:", error.message)
             throw error
         }
-    }
+        }
 
     async function DeleteAnimal(id){
         try{

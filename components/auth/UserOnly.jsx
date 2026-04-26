@@ -3,7 +3,7 @@ import { useUser } from "../../hooks/useUser"
 import { useEffect } from "react"
 import ThemedLoader from "../ThemedLoader"
 
-const UserOnly = ({ children, allowedRoles = [] }) => {
+const UserOnly = ({ children }) => {
     const { user, authChecked } = useUser()
     const router = useRouter()
     const segments = useSegments()
@@ -13,34 +13,18 @@ const UserOnly = ({ children, allowedRoles = [] }) => {
 
         // If no user, redirect to auth
         if (!user) {
-            router.replace('/login')
+            router.replace('/auth')
             return
         }
 
-        // If roles are specified
-        if (allowedRoles.length > 0) {
-            const userRole = user.role?.toLowerCase()
-            const allowedRolesLower = allowedRoles.map(r => r.toLowerCase())
-            
-            // Check if user has allowed role
-            if (!allowedRolesLower.includes(userRole)) {
-                // Redirect based on their actual role
-                if (userRole === 'vet') {
-                    // They are a vet but trying to access non-vet area
-                    // This shouldn't happen, but just in case
-                    if (!segments.includes('(vetDashboard)')) {
-                        router.replace('/(vetDashboard)/animals')
-                    }
-                } else if (userRole === 'owner') {
-                    router.replace('/(ownerDashboard)/animals')
-                } else {
-                    router.replace('/auth')
-                }
-                return
-            }
+        // Check if user has vet role
+        const userRole = user.role?.toLowerCase()
+        
+        if (userRole !== 'vet') {
+            router.replace('/auth')
+            return
         }
 
-        // User has correct role, allow access
     }, [user, authChecked])
 
     if (!authChecked) {
@@ -52,13 +36,9 @@ const UserOnly = ({ children, allowedRoles = [] }) => {
     }
 
     // Final role check
-    if (allowedRoles.length > 0) {
-        const userRole = user.role?.toLowerCase()
-        const allowedRolesLower = allowedRoles.map(r => r.toLowerCase())
-        
-        if (!allowedRolesLower.includes(userRole)) {
-            return <ThemedLoader />
-        }
+    const userRole = user.role?.toLowerCase()
+    if (userRole !== 'vet') {
+        return <ThemedLoader />
     }
 
     return children

@@ -1,4 +1,4 @@
-import { FlatList, Pressable, StyleSheet, View, TouchableOpacity, Dimensions, Platform, TextInput } from 'react-native'
+import { FlatList, Pressable, StyleSheet, View, TouchableOpacity, Dimensions, Platform, TextInput, Image } from 'react-native'
 import { router } from 'expo-router'
 import { useState, useMemo } from 'react'
 
@@ -14,7 +14,7 @@ const { width } = Dimensions.get('window')
 const isWeb = Platform.OS === 'web'
 const CARD_WIDTH = isWeb ? (width - 400) / 4 : (width - 48) / 2
 
-// Map species to emoji icons
+// Map species to emoji icons (fallback when no photo)
 const getSpeciesIcon = (species) => {
   const iconMap = {
     'Dog': '🐕',
@@ -74,7 +74,6 @@ const Animals = () => {
   const filteredAnimals = useMemo(() => {
     let filtered = [...animals]
     
-    // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(animal => 
@@ -85,21 +84,18 @@ const Animals = () => {
       )
     }
     
-    // Filter by species
     if (selectedSpecies.length > 0) {
       filtered = filtered.filter(animal => 
         selectedSpecies.includes(animal.species)
       )
     }
     
-    // Filter by status
     if (selectedStatus.length > 0) {
       filtered = filtered.filter(animal => 
         selectedStatus.includes('Active')
       )
     }
     
-    // Filter by age range
     if (selectedAgeRange.length > 0) {
       filtered = filtered.filter(animal => {
         const age = animal.age || 0
@@ -176,10 +172,15 @@ const Animals = () => {
       })}
     >
       <ThemedCard style={styles.card}>
+        {/* Species Icon or Photo */}
         <View style={styles.iconContainer}>
-          <ThemedText style={styles.speciesIcon}>
-            {getSpeciesIcon(item.species)}
-          </ThemedText>
+          {item.localPhotoUri ? (
+            <Image source={{ uri: item.localPhotoUri }} style={styles.thumbnailImage} />
+          ) : (
+            <ThemedText style={styles.speciesIcon}>
+              {getSpeciesIcon(item.species)}
+            </ThemedText>
+          )}
         </View>
 
         <ThemedText style={styles.name} numberOfLines={1}>
@@ -302,7 +303,6 @@ const Animals = () => {
     </View>
   )
 
-  // Prepare data array with Add Animal card at the end
   const displayData = useMemo(() => {
     return [...filteredAnimals, { isAddButton: true, id: 'add-button' }]
   }, [filteredAnimals])
@@ -324,7 +324,6 @@ const Animals = () => {
         </ThemedText>
         
         <View style={styles.headerRight}>
-          {/* Search Bar */}
           <View style={styles.searchContainer}>
             <ThemedText style={styles.searchIcon}>🔍</ThemedText>
             <TextInput
@@ -357,10 +356,8 @@ const Animals = () => {
       <Spacer />
 
       <View style={styles.mainContent}>
-        {/* Filters Sidebar - Always visible on web, conditional on mobile */}
         {(isWeb || showFilters) && <FiltersSidebar />}
         
-        {/* Animal Grid */}
         <View style={[styles.gridContainer, !isWeb && showFilters && styles.gridWithFilters]}>
           <FlatList
             key={isWeb ? 'web-grid' : (showFilters ? 'filtered-grid' : 'full-grid')}
@@ -600,6 +597,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
+    overflow: 'hidden',
+  },
+  thumbnailImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   speciesIcon: {
     fontSize: 22,
@@ -666,11 +669,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   emptyEmoji: {
-    fontSize: 64,
+    fontSize: 48,
     marginBottom: 16,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
     marginBottom: 8,
     textAlign: 'center',

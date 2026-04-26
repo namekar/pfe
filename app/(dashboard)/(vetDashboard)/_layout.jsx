@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons"
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"
 import { Tabs, usePathname, router, Stack } from "expo-router"
 import { useColorScheme, Platform, Pressable, View, StyleSheet } from "react-native"
 import { Colors } from "../../../constants/colors"
@@ -13,13 +13,13 @@ export default function DashboardLayout() {
   // Web view - Stack navigation with custom navbar
   if (Platform.OS === 'web') {
     return (
-      <UserOnly allowedRoles={['vet']}>  {/* Added allowedRoles */}
+      <UserOnly>
         <View style={[styles.webContainer, { backgroundColor: theme.background }]}>
           <View style={[styles.navbar, { backgroundColor: theme.navBackground, borderBottomColor: theme.border || '#E5E5E5' }]}>
             <View style={styles.navbarContent}>
               <Pressable onPress={() => router.push('/animals')} style={styles.logoContainer}>
                 <Ionicons name="paw" size={28} color={theme.primary || Colors.light.primary} />
-                <ThemedText style={[styles.logoText, { color: theme.text }]}>Vet Dashboard</ThemedText>
+                <ThemedText style={[styles.logoText, { color: theme.text }]}>vetora</ThemedText>
               </Pressable>
               
               <View style={styles.navLinks}>
@@ -41,6 +41,27 @@ export default function DashboardLayout() {
                     pathname === '/animals' && [styles.navLinkTextActive, { color: theme.primary }]
                   ]}>
                     Animals
+                  </ThemedText>
+                </Pressable>
+
+                <Pressable
+                  onPress={() => router.push('/VetIntelAI')}
+                  style={({ pressed }) => [
+                    styles.navLink,
+                    pathname === '/VetIntelAI' && [styles.navLinkActive, { borderBottomColor: theme.primary }],
+                    pressed && { opacity: 0.7 }
+                  ]}
+                >
+                  <MaterialCommunityIcons 
+                    name={pathname === '/VetIntelAI' ? 'robot-brain' : 'robot-brain-outline'} 
+                    size={20} 
+                    color={pathname === '/VetIntelAI' ? theme.primary : theme.iconColor} 
+                  />
+                  <ThemedText style={[
+                    styles.navLinkText,
+                    pathname === '/VetIntelAI' && [styles.navLinkTextActive, { color: theme.primary }]
+                  ]}>
+                    VetIntel
                   </ThemedText>
                 </Pressable>
 
@@ -73,6 +94,7 @@ export default function DashboardLayout() {
           <View style={styles.content}>
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="animals" />
+              <Stack.Screen name="VetIntelAI" />
               <Stack.Screen name="Profile" />
               <Stack.Screen name="animals/[id]" />
             </Stack>
@@ -84,7 +106,7 @@ export default function DashboardLayout() {
 
   // Mobile view - Bottom tabs
   return (
-    <UserOnly allowedRoles={['vet']}>  {/* Added allowedRoles */}
+    <UserOnly>
       <Tabs
         screenOptions={{
           headerShown: false,
@@ -101,6 +123,19 @@ export default function DashboardLayout() {
               <Ionicons 
                 size={24} 
                 name={focused ? 'paw' : 'paw-outline'} 
+                color={focused ? theme.iconColorFocused : theme.iconColor} 
+              />
+            )
+          }}
+        />
+        <Tabs.Screen 
+          name="VetIntelAI"
+          options={{ 
+            title: "VetIntel", 
+            tabBarIcon: ({ focused }) => (
+              <MaterialCommunityIcons 
+                size={24} 
+                name={focused ? 'robot-brain' : 'robot-brain-outline'} 
                 color={focused ? theme.iconColorFocused : theme.iconColor} 
               />
             )
